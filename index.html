@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agen APET Pandeglang — Firebase Setup Gratis</title>
+  <meta name="description" content="Panduan setup gratis Firebase + GitHub Pages untuk aplikasi Agen APET Pandeglang." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f6f1e8;
+      --panel:#fffaf3;
+      --ink:#191713;
+      --muted:#6f675d;
+      --line:#ddd2c3;
+      --olive:#4b6b43;
+      --olive-2:#6f8d62;
+      --terracotta:#bd6544;
+      --gold:#b89658;
+      --blue:#32556b;
+      --danger:#a23c32;
+      --shadow:0 24px 60px rgba(31, 25, 19, .10);
+      --radius:24px;
+      --radius-sm:16px;
+      --max:1240px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family:"Manrope", sans-serif;
+      background:
+        radial-gradient(circle at 14% 10%, rgba(184,150,88,.16), transparent 18%),
+        radial-gradient(circle at 88% 12%, rgba(189,101,68,.12), transparent 20%),
+        linear-gradient(180deg, #f8f2e9, #f3ecdf 56%, #eee3d3);
+      min-height:100vh;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.18;
+      background-image:
+        linear-gradient(rgba(25,23,19,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(25,23,19,.05) 1px, transparent 1px);
+      background-size:22px 22px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 78%);
+    }
+
+    a{text-decoration:none;color:inherit}
+    button,input,textarea{font:inherit}
+
+    .wrap{width:min(var(--max), calc(100% - 28px)); margin-inline:auto}
+
+    .reveal{
+      opacity:0;
+      transform:translateY(18px);
+      transition:opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    @keyframes rise{
+      from{opacity:0; transform:translateY(20px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    .st1{animation:rise .8s .08s both}
+    .st2{animation:rise .8s .18s both}
+    .st3{animation:rise .8s .28s both}
+    .st4{animation:rise .8s .38s both}
+    .st5{animation:rise .8s .48s both}
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:40;
+      backdrop-filter:blur(12px);
+      background:rgba(255,250,243,.78);
+      border-bottom:1px solid rgba(25,23,19,.08);
+    }
+
+    .topbar-inner{
+      min-height:78px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+
+    .mark{
+      width:46px;height:46px;border-radius:16px;
+      background:linear-gradient(135deg, var(--olive), var(--terracotta));
+      box-shadow:0 14px 30px rgba(75,107,67,.18), inset 0 1px 0 rgba(255,255,255,.38);
+      position:relative; overflow:hidden;
+    }
+    .mark::before,.mark::after{
+      content:"";
+      position:absolute;
+      background:rgba(255,255,255,.22);
+      border-radius:999px;
+    }
+    .mark::before{width:64px;height:12px;left:-8px;top:12px;transform:rotate(-28deg)}
+    .mark::after{width:50px;height:10px;right:-8px;bottom:12px;transform:rotate(-28deg)}
+
+    .brand h1{
+      margin:0;
+      font-family:"Space Grotesk", sans-serif;
+      font-size:1.04rem;
+      letter-spacing:-.04em;
+    }
+
+    .brand small{
+      display:block;
+      margin-top:4px;
+      font-size:.76rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--muted);
+      font-weight:800;
+    }
+
+    .nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .nav a{
+      padding:10px 14px;
+      border-radius:999px;
+      color:var(--muted);
+      font-weight:800;
+      font-size:.92rem;
+      transition:.25s ease;
+    }
+    .nav a:hover{
+      background:rgba(75,107,67,.10);
+      color:var(--ink);
+      transform:translateY(-1px);
+    }
+
+    .menu-btn{
+      display:none;
+      border:none;
+      width:46px;height:46px;border-radius:14px;
+      background:rgba(25,23,19,.06);
+      cursor:pointer;
+    }
+    .menu-btn span{
+      display:block;
+      width:20px;height:2px;background:var(--ink);
+      margin:4px auto;border-radius:2px;
+    }
+
+    .hero{
+      padding:28px 0 18px;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:20px;
+    }
+
+    .panel{
+      background:rgba(255,250,243,.76);
+      border:1px solid rgba(25,23,19,.08);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(10px);
+    }
+
+    .hero-main{
+      padding:clamp(24px, 4vw, 44px);
+      min-height:460px;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      isolation:isolate;
+    }
+
+    .hero-main::after{
+      content:"";
+      position:absolute;
+      right:-7%;
+      bottom:-14%;
+      width:320px;
+      height:320px;
+      border-radius:42px;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(255,255,255,.55), transparent 40%),
+        linear-gradient(135deg, rgba(189,101,68,.75), rgba(75,107,67,.92));
+      transform:rotate(18deg);
+      z-index:-1;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      width:max-content;
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.58);
+      border:1px solid rgba(25,23,19,.08);
+      color:var(--olive);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:.8rem;
+      font-weight:900;
+    }
+
+    .eyebrow::before{
+      content:"";
+      width:10px;height:10px;border-radius:50%;
+      background:var(--olive);
+      box-shadow:0 0 0 6px rgba(75,107,67,.12);
+    }
+
+    .hero-title{
+      margin:16px 0 12px;
+      font-family:"Space Grotesk", sans-serif;
+      font-size:clamp(2.4rem, 5vw, 5.2rem);
+      line-height:.95;
+      letter-spacing:-.06em;
+      max-width:11ch;
+    }
+
+    .hero-text{
+      margin:0;
+      max-width:60ch;
+      color:var(--muted);
+      line-height:1.8;
+      font-size:1rem;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:24px;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      border-radius:18px;
+      padding:14px 18px;
+      font-weight:900;
+      transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
+    }
+    .btn:active{transform:translateY(1px) scale(.98)}
+    .btn-primary{
+      background:var(--ink);
+      color:#fff;
+      box-shadow:0 14px 30px rgba(25,23,19,.18);
+    }
+    .btn-primary:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 34px rgba(25,23,19,.24);
+    }
+    .btn-secondary{
+      background:rgba(255,255,255,.74);
+      color:var(--ink);
+      border:1px solid rgba(25,23,19,.10);
+    }
+    .btn-secondary:hover{
+      background:rgba(75,107,67,.09);
+      transform:translateY(-2px);
+    }
+
+    .metric-row{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+      margin-top:26px;
+    }
+
+    .metric{
+      padding:16px;
+      border-radius:18px;
+      border:1px solid rgba(25,23,19,.08);
+      background:rgba(255,255,255,.55);
+    }
+    .metric strong{
+      display:block;
+      font-family:"Space Grotesk", sans-serif;
+      font-size:1.7rem;
+      letter-spacing:-.05em;
+    }
+    .metric span{
+      display:block;
+      color:var(--muted);
+      font-weight:700;
+      font-size:.86rem;
+      margin-top:4px;
+    }
+
+    .hero-side{
+      padding:20px;
+      display:grid;
+      gap:16px;
+      align-content:start;
+    }
+
+    .section-title{
+      margin:0;
+      font-family:"Space Grotesk", sans-serif;
+      font-size:1.2rem;
+      letter-spacing:-.04em;
+    }
+
+    .muted{
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      width:max-content;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(75,107,67,.12);
+      color:var(--olive);
+      font-size:.78rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .badge.gold{
+      background:rgba(184,150,88,.14);
+      color:#83652a;
+    }
+
+    .stack{display:grid; gap:14px}
+
+    .tile{
+      padding:16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.58);
+      border:1px solid rgba(25,23,19,.08);
+    }
+
+    .tile h3{
+      margin:0 0 8px;
+      font-size:1rem;
+    }
+
+    .tile p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:.92rem;
+    }
+
+    .section{
+      padding:14px 0;
+    }
+
+    .head{
+      display:flex;
+      justify-content:space-between;
+      align-items:end;
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .head p{
+      margin:8px 0 0;
+      color:var(--muted);
+      line-height:1.8;
+      max-width:70ch;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:20px;
+    }
+
+    .content{
+      padding:22px;
+    }
+
+    .checklist{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .check{
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:12px;
+      align-items:start;
+      padding:14px 0;
+      border-bottom:1px dashed rgba(25,23,19,.14);
+    }
+    .check:last-child{border-bottom:none}
+    .check i{
+      width:34px;height:34px;border-radius:12px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg, var(--olive), var(--terracotta));
+      color:#fff; font-style:normal; font-weight:900;
+      box-shadow:0 10px 16px rgba(75,107,67,.14);
+    }
+    .check h4{
+      margin:0 0 4px;
+      font-size:.96rem;
+    }
+    .check p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:.9rem;
+    }
+
+    .codebox{
+      background:#1b1a18;
+      color:#f7f0e4;
+      border-radius:22px;
+      padding:18px;
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:0 20px 40px rgba(27,26,24,.2);
+      overflow:auto;
+      position:relative;
+    }
+
+    .codehead{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+      color:#d0c3b0;
+      font-size:.84rem;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:.88rem;
+      line-height:1.7;
+    }
+
+    .copy-btn{
+      border:none;
+      cursor:pointer;
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:900;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      transition:.22s ease;
+    }
+    .copy-btn:hover{
+      background:rgba(255,255,255,.14);
+      transform:translateY(-1px);
+    }
+
+    .schema{
+      display:grid;
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .schema-item{
+      padding:16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.56);
+      border:1px solid rgba(25,23,19,.08);
+    }
+
+    .schema-item strong{
+      display:block;
+      font-family:"Space Grotesk", sans-serif;
+      letter-spacing:-.03em;
+      margin-bottom:8px;
+      font-size:1.02rem;
+    }
+
+    .schema-item ul{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.75;
+      font-size:.92rem;
+    }
+
+    .steps{
+      counter-reset:step;
+      display:grid;
+      gap:14px;
+      margin-top:12px;
+    }
+
+    .step{
+      position:relative;
+      padding:18px 18px 18px 66px;
+      border-radius:18px;
+      background:rgba(255,255,255,.58);
+      border:1px solid rgba(25,23,19,.08);
+    }
+
+    .step::before{
+      counter-increment:step;
+      content:counter(step);
+      position:absolute;
+      left:16px; top:16px;
+      width:36px;height:36px;border-radius:12px;
+      display:grid;place-items:center;
+      background:var(--ink);
+      color:#fff;font-weight:900;
+      font-family:"Space Grotesk", sans-serif;
+    }
+
+    .step h4{
+      margin:0 0 6px;
+      font-size:1rem;
+    }
+    .step p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.75;
+      font-size:.92rem;
+    }
+
+    .footer{
+      padding:24px 0 38px;
+    }
+
+    .footer-box{
+      padding:22px;
+      border-radius:24px;
+      background:rgba(255,250,243,.75);
+      border:1px solid rgba(25,23,19,.08);
+      box-shadow:var(--shadow);
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      color:var(--muted);
+    }
+
+    .footer-box strong{color:var(--ink); display:block; margin-bottom:6px}
+
+    @media (max-width: 1080px){
+      .hero-grid,.grid-2{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 860px){
+      .nav{
+        display:none;
+        position:absolute;
+        top:78px; left:14px; right:14px;
+        background:rgba(255,250,243,.96);
+        border:1px solid rgba(25,23,19,.08);
+        border-radius:20px;
+        box-shadow:var(--shadow);
+        padding:12px;
+      }
+      .nav.open{display:grid}
+      .menu-btn{display:block}
+      .topbar-inner{position:relative}
+    }
+
+    @media (max-width: 640px){
+      .wrap{width:min(var(--max), calc(100% - 20px))}
+      .metric-row{grid-template-columns:1fr}
+      .panel{border-radius:22px}
+      .hero-main{min-height:auto}
+      .head{flex-direction:column; align-items:start}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>Agen APET Pandeglang</h1>
+          <small>Setup Gratis Firebase + GitHub Pages</small>
+        </div>
+      </div>
+
+      <nav class="nav" id="navMenu" aria-label="Navigasi utama">
+        <a href="#ringkasan">Ringkasan</a>
+        <a href="#schema">Schema</a>
+        <a href="#langkah">Langkah</a>
+        <a href="#kode">Kode</a>
+      </nav>
+
+      <button class="menu-btn" id="menuToggle" aria-label="Buka menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="ringkasan">
+      <div class="wrap hero-grid">
+        <article class="panel hero-main">
+          <div>
+            <div class="eyebrow st1">Solusi Gratis Paling Praktis</div>
+            <h2 class="hero-title st2">Pakai GitHub Pages + Firebase.</h2>
+            <p class="hero-text st3">
+              Untuk kebutuhan Agen APET Pandeglang, kombinasi paling ringan dan gratis adalah
+              <strong>frontend HTML/CSS/JS di GitHub Pages</strong> lalu data disimpan di
+              <strong>Firebase Firestore</strong>. Ini cocok untuk admin pusat, stokis, dan kurir
+              tanpa perlu sewa server di awal.
+            </p>
+            <div class="hero-actions st4">
+              <a href="#schema" class="btn btn-primary">Lihat Struktur Database</a>
+              <a href="#kode" class="btn btn-secondary">Salin Kode Firebase</a>
+            </div>
+          </div>
+
+          <div class="metric-row st5">
+            <div class="metric">
+              <strong>35</strong>
+              <span>Kecamatan</span>
+            </div>
+            <div class="metric">
+              <strong>339</strong>
+              <span>Desa / Kelurahan</span>
+            </div>
+            <div class="metric">
+              <strong>339+</strong>
+              <span>Stokis & kurir area</span>
+            </div>
+          </div>
+        </article>
+
+        <aside class="panel hero-side">
+          <span class="badge">Yang Anda punya sekarang</span>
+          <div class="stack">
+            <div class="tile">
+              <h3>GitHub Pages sudah live</h3>
+              <p>Repository Anda sudah aktif di GitHub Pages, jadi frontend bisa langsung dipakai untuk aplikasi admin.</p>
+            </div>
+            <div class="tile">
+              <h3>Firebase juga sudah tersedia</h3>
+              <p>Dari konteks yang Anda buka, Anda sudah punya project Firebase. Tinggal dibuat Firestore dan dihubungkan ke website.</p>
+            </div>
+            <div class="tile">
+              <h3>Alternatif gratis lain</h3>
+              <p>Kalau mau, Google Apps Script + Google Sheets juga bisa dipakai gratis. Tapi untuk realtime dan struktur aplikasi, Firebase lebih nyaman.</p>
+            </div>
+          </div>
+          <span class="badge gold">Saran: mulai dari Firestore dulu</span>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="schema">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <h2 class="section-title">Struktur database Firebase yang saya sarankan</h2>
+            <p>
+              Karena Firestore bersifat dokumen, struktur paling aman adalah memisahkan data master wilayah,
+              data stokis, data kurir, dan transaksi distribusi. Ini tetap sederhana, hemat query, dan gampang dipakai di dashboard.
+            </p>
+          </div>
+          <span class="badge">Firestore Schema</span>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel content reveal">
+            <h3 class="section-title">Collection utama</h3>
+            <div class="schema">
+              <div class="schema-item">
+                <strong>1. kecamatan</strong>
+                <ul>
+                  <li>nama</li>
+                  <li>kode</li>
+                  <li>aktif</li>
+                </ul>
+              </div>
+
+              <div class="schema-item">
+                <strong>2. desa</strong>
+                <ul>
+                  <li>nama</li>
+                  <li>jenis: Desa / Kelurahan</li>
+                  <li>kecamatanId</li>
+                  <li>kecamatanNama</li>
+                  <li>aktif</li>
+                </ul>
+              </div>
+
+              <div class="schema-item">
+                <strong>3. stokis</strong>
+                <ul>
+                  <li>kodeStokis</li>
+                  <li>namaStokis</li>
+                  <li>kecamatanId</li>
+                  <li>desaId</li>
+                  <li>penanggungJawab</li>
+                  <li>noHp</li>
+                  <li>alamat</li>
+                  <li>status</li>
+                  <li>totalStok</li>
+                </ul>
+              </div>
+
+              <div class="schema-item">
+                <strong>4. kurir</strong>
+                <ul>
+                  <li>stokisId</li>
+                  <li>namaKurir</li>
+                  <li>noHp</li>
+                  <li>kendaraan</li>
+                  <li>status</li>
+                </ul>
+              </div>
+
+              <div class="schema-item">
+                <strong>5. distribusi</strong>
+                <ul>
+                  <li>stokisId</li>
+                  <li>kurirId</li>
+                  <li>tujuan: Warga / Dapur MBG</li>
+                  <li>namaPenerima</li>
+                  <li>jumlah</li>
+                  <li>statusPengiriman</li>
+                  <li>tanggalKirim</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <aside class="panel content reveal">
+            <h3 class="section-title">Kenapa model ini bagus</h3>
+            <div class="checklist">
+              <div class="check">
+                <i>✓</i>
+                <div>
+                  <h4>Mudah difilter</h4>
+                  <p>Admin bisa filter berdasarkan kecamatan, desa, stokis, atau status stok dengan struktur yang tetap jelas.</p>
+                </div>
+              </div>
+              <div class="check">
+                <i>✓</i>
+                <div>
+                  <h4>Mudah ditambah user</h4>
+                  <p>Nanti bisa ditambah collection <strong>users</strong> untuk Super Admin, Admin Kecamatan, Admin Stokis, dan Kurir.</p>
+                </div>
+              </div>
+              <div class="check">
+                <i>✓</i>
+                <div>
+                  <h4>Cocok untuk gratis</h4>
+                  <p>Firestore free tier cukup untuk tahap awal, apalagi jika query dibuat sederhana dan tidak terlalu boros listener realtime.</p>
+                </div>
+              </div>
+              <div class="check">
+                <i>✓</i>
+                <div>
+                  <h4>Cocok dengan GitHub Pages</h4>
+                  <p>Karena frontend Anda statis, website bisa tetap gratis penuh dan langsung bicara ke Firebase dari browser.</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="langkah">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <h2 class="section-title">Langkah setup yang harus Anda lakukan</h2>
+            <p>
+              Saya buat singkat dan praktis supaya Anda bisa langsung jalan. Setelah langkah ini, website GitHub Pages Anda
+              bisa mulai membaca dan menulis data ke Firebase.
+            </p>
+          </div>
+          <span class="badge">Tahap Implementasi</span>
+        </div>
+
+        <div class="panel content reveal">
+          <div class="steps">
+            <div class="step">
+              <h4>Buka Firebase Console</h4>
+              <p>Masuk ke project Firebase Anda, lalu aktifkan <strong>Firestore Database</strong> dalam mode test terlebih dahulu untuk pengembangan awal.</p>
+            </div>
+            <div class="step">
+              <h4>Tambahkan Web App</h4>
+              <p>Di Project Settings, buat atau pakai <strong>Web App</strong> lalu salin object <strong>firebaseConfig</strong>.</p>
+            </div>
+            <div class="step">
+              <h4>Buat collection utama</h4>
+              <p>Buat collection: <strong>kecamatan</strong>, <strong>desa</strong>, <strong>stokis</strong>, <strong>kurir</strong>, dan <strong>distribusi</strong>.</p>
+            </div>
+            <div class="step">
+              <h4>Tempelkan config ke website</h4>
+              <p>Masukkan config Firebase ke file HTML aplikasi Anda, lalu import SDK Firebase versi web modular.</p>
+            </div>
+            <div class="step">
+              <h4>Deploy ke GitHub Pages</h4>
+              <p>Commit file ke repository <strong>Agen-Apet-Pandeglang-</strong>. Karena GitHub Pages Anda sudah aktif, perubahan akan langsung ter-publish.</p>
+            </div>
+            <div class="step">
+              <h4>Set rules dasar</h4>
+              <p>Setelah testing berhasil, jangan biarkan mode test terlalu lama. Atur rules agar hanya user tertentu yang bisa mengubah data.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="kode">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <h2 class="section-title">Kode dasar Firebase untuk aplikasi Anda</h2>
+            <p>
+              Di bawah ini adalah starter code yang bisa langsung Anda tempel ke aplikasi HTML Anda.
+              Tinggal ganti isi <strong>firebaseConfig</strong> dengan milik project Firebase Anda.
+            </p>
+          </div>
+          <span class="badge">Starter Code</span>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel content reveal">
+            <div class="codebox">
+              <div class="codehead">
+                <span>firebase setup</span>
+                <button class="copy-btn" data-copy="codeFirebase">Salin</button>
+              </div>
+              <pre id="codeFirebase">&lt;script type="module"&gt;
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "ISI_API_KEY_ANDA",
+    authDomain: "PROJECT-ID.firebaseapp.com",
+    projectId: "PROJECT-ID",
+    storageBucket: "PROJECT-ID.firebasestorage.app",
+    messagingSenderId: "ISI_SENDER_ID",
+    appId: "ISI_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function tambahStokis() {
+    try {
+      await addDoc(collection(db, "stokis"), {
+        kodeStokis: "STK-001",
+        namaStokis: "Stokis Labuan 01",
+        kecamatanId: "labuan",
+        kecamatanNama: "Labuan",
+        desaId: "labuan-kel",
+        desaNama: "Labuan",
+        penanggungJawab: "Asep",
+        noHp: "081234567890",
+        alamat: "Jl. Raya Labuan",
+        status: "Aktif",
+        totalStok: 320,
+        createdAt: serverTimestamp()
+      });
+      alert("Data stokis berhasil ditambahkan");
+    } catch (error) {
+      console.error("Gagal tambah stokis:", error);
+    }
+  }
+
+  async function ambilStokis() {
+    const querySnapshot = await getDocs(collection(db, "stokis"));
+    const data = [];
+    querySnapshot.forEach((doc) =&gt; {
+      data.push({ id: doc.id, ...doc.data() });
+    });
+    console.log("Data stokis:", data);
+  }
+
+  window.tambahStokis = tambahStokis;
+  window.ambilStokis = ambilStokis;
+&lt;/script&gt;</pre>
+            </div>
+          </article>
+
+          <aside class="panel content reveal">
+            <div class="codebox">
+              <div class="codehead">
+                <span>contoh data dokumen stokis</span>
+                <button class="copy-btn" data-copy="codeDoc">Salin</button>
+              </div>
+              <pre id="codeDoc">{
+  "kodeStokis": "STK-001",
+  "namaStokis": "Stokis Labuan 01",
+  "kecamatanId": "labuan",
+  "kecamatanNama": "Labuan",
+  "desaId": "labuan-kel",
+  "desaNama": "Labuan",
+  "penanggungJawab": "Asep",
+  "noHp": "081234567890",
+  "alamat": "Jl. Raya Labuan",
+  "status": "Aktif",
+  "totalStok": 320,
+  "createdAt": "serverTimestamp"
+}</pre>
+            </div>
+
+            <div class="checklist" style="margin-top:16px">
+              <div class="check">
+                <i>!</i>
+                <div>
+                  <h4>Catatan penting</h4>
+                  <p>Jangan taruh data rahasia backend di frontend. Firebase config web memang aman untuk ditampilkan, tapi rules Firestore tetap wajib diatur.</p>
+                </div>
+              </div>
+              <div class="check">
+                <i>i</i>
+                <div>
+                  <h4>Mode pengembangan</h4>
+                  <p>Untuk awal, Anda bisa testing dengan mode test. Setelah aplikasi jalan, saya sarankan saya bantu buatkan rules yang aman.</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <h2 class="section-title">Alternatif gratis: Google Apps Script + Google Sheets</h2>
+            <p>
+              Karena Anda juga membuka referensi Apps Script, opsi ini juga gratis dan cukup bagus kalau Anda lebih nyaman
+              mengelola data seperti Excel. Tapi untuk aplikasi modern dan realtime, Firebase tetap lebih unggul.
+            </p>
+          </div>
+          <span class="badge gold">Alternatif</span>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel content reveal">
+            <h3 class="section-title">Kapan pilih Apps Script</h3>
+            <div class="checklist">
+              <div class="check">
+                <i>✓</i>
+                <div>
+                  <h4>Jika admin suka spreadsheet</h4>
+                  <p>Data wilayah, stokis, dan kurir bisa diedit seperti Excel tanpa harus paham database.</p>
+                </div>
+              </div>
+              <div class="check">
+                <i>✓</i>
+                <div>
+                  <h4>Jika ingin backend gratis sederhana</h4>
+                  <p>Apps Script bisa jadi API kecil untuk website statis Anda.</p>
+                </div>
+              </div>
+              <div class="check">
+                <i>×</i>
+                <div>
+                  <h4>Kekurangannya</h4>
+                  <p>Tidak sekuat Firebase untuk realtime, role user, dan skalabilitas aplikasi lapangan.</p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <aside class="panel content reveal">
+            <h3 class="section-title">Rekomendasi saya tetap</h3>
+            <p class="muted">
+              Untuk Agen APET Pandeglang, saya tetap menyarankan:
+            </p>
+            <div class="schema">
+              <div class="schema-item">
+                <strong>Frontend</strong>
+                <ul><li>GitHub Pages gratis</li></ul>
+              </div>
+              <div class="schema-item">
+                <strong>Database</strong>
+                <ul><li>Firebase Firestore gratis</li></ul>
+              </div>
+              <div class="schema-item">
+                <strong>Login</strong>
+                <ul><li>Firebase Authentication</li></ul>
+              </div>
+              <div class="schema-item">
+                <strong>Tahap berikutnya</strong>
+                <ul><li>Hubungkan dashboard HTML Anda ke Firestore</li></ul>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-box reveal">
+        <div>
+          <strong>Status saat ini</strong>
+          <div>GitHub Pages Anda sudah live. Langkah berikutnya tinggal konekkan aplikasi ke Firestore.</div>
+        </div>
+        <div>
+          <strong>Langkah lanjutan yang bisa saya bantu</strong>
+          <div>Saya bisa lanjut buatkan versi dashboard Agen APET yang langsung tersambung ke Firebase.</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+    document.querySelectorAll(".copy-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const targetId = btn.getAttribute("data-copy");
+        const text = document.getElementById(targetId).innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = "Tersalin";
+          setTimeout(() => btn.textContent = old, 1400);
+        } catch (e) {
+          alert("Gagal menyalin kode.");
+        }
+      });
+    });
+
+    const menuToggle = document.getElementById("menuToggle");
+    const navMenu = document.getElementById("navMenu");
+    menuToggle.addEventListener("click", () => navMenu.classList.toggle("open"));
+    navMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => navMenu.classList.remove("open")));
+  </script>
+</body>
+</html>
