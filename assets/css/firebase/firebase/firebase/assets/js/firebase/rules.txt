@@ -1,0 +1,86 @@
+=========================
+FILE: firebase/rules.txt
+=========================
+
+FIRESTORE RULES
+----------------
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isActiveUser() {
+      return isSignedIn() && userDoc().data.aktif == true;
+    }
+
+    function isSuperAdmin() {
+      return isActiveUser() && userDoc().data.role == "super_admin";
+    }
+
+    function isAdminStokis() {
+      return isActiveUser() && userDoc().data.role == "admin_stokis";
+    }
+
+    function myStokisId() {
+      return userDoc().data.stokisId;
+    }
+
+    match /users/{userId} {
+      allow read: if isSuperAdmin() || (isActiveUser() && request.auth.uid == userId);
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    match /stokis/{docId} {
+      allow read: if isSuperAdmin() || (isAdminStokis() && resource.data.kodeStokis == myStokisId());
+      allow create: if isSuperAdmin() || (isAdminStokis() && request.resource.data.kodeStokis == myStokisId());
+      allow update, delete: if isSuperAdmin() || (isAdminStokis() && resource.data.kodeStokis == myStokisId());
+    }
+
+    match /kurir/{docId} {
+      allow read: if isSuperAdmin() || (isAdminStokis() && resource.data.stokisId == myStokisId());
+      allow create: if isSuperAdmin() || (isAdminStokis() && request.resource.data.stokisId == myStokisId());
+      allow update, delete: if isSuperAdmin() || (isAdminStokis() && resource.data.stokisId == myStokisId());
+    }
+
+    match /wilayah/{docId} {
+      allow read: if isActiveUser();
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    match /distribusi/{docId} {
+      allow read: if isSuperAdmin() || (isAdminStokis() && resource.data.stokisId == myStokisId());
+      allow create: if isSuperAdmin() || (isAdminStokis() && request.resource.data.stokisId == myStokisId());
+      allow update, delete: if isSuperAdmin() || (isAdminStokis() && resource.data.stokisId == myStokisId());
+    }
+  }
+}
+
+
+STORAGE RULES
+-------------
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    match /stokis/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    match /kurir/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+  }
+}
