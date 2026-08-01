@@ -1,1077 +1,659 @@
+<!-- =========================
+FILE: index.html
+========================= -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agen APET Pandeglang — Firebase Setup Gratis</title>
-  <meta name="description" content="Panduan setup gratis Firebase + GitHub Pages untuk aplikasi Agen APET Pandeglang." />
+  <title>Agen APET — Admin Firebase</title>
+  <meta name="description" content="Sistem admin Agen APET dengan Firebase Authentication, Firestore, Storage, GPS, role super admin dan admin stokis." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#f6f1e8;
-      --panel:#fffaf3;
-      --ink:#191713;
-      --muted:#6f675d;
-      --line:#ddd2c3;
-      --olive:#4b6b43;
-      --olive-2:#6f8d62;
-      --terracotta:#bd6544;
-      --gold:#b89658;
-      --blue:#32556b;
-      --danger:#a23c32;
-      --shadow:0 24px 60px rgba(31, 25, 19, .10);
-      --radius:24px;
-      --radius-sm:16px;
-      --max:1240px;
-    }
-
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      color:var(--ink);
-      font-family:"Manrope", sans-serif;
-      background:
-        radial-gradient(circle at 14% 10%, rgba(184,150,88,.16), transparent 18%),
-        radial-gradient(circle at 88% 12%, rgba(189,101,68,.12), transparent 20%),
-        linear-gradient(180deg, #f8f2e9, #f3ecdf 56%, #eee3d3);
-      min-height:100vh;
-    }
-
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      opacity:.18;
-      background-image:
-        linear-gradient(rgba(25,23,19,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(25,23,19,.05) 1px, transparent 1px);
-      background-size:22px 22px;
-      mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 78%);
-    }
-
-    a{text-decoration:none;color:inherit}
-    button,input,textarea{font:inherit}
-
-    .wrap{width:min(var(--max), calc(100% - 28px)); margin-inline:auto}
-
-    .reveal{
-      opacity:0;
-      transform:translateY(18px);
-      transition:opacity .7s ease, transform .7s ease;
-    }
-    .reveal.visible{
-      opacity:1;
-      transform:translateY(0);
-    }
-
-    @keyframes rise{
-      from{opacity:0; transform:translateY(20px)}
-      to{opacity:1; transform:translateY(0)}
-    }
-
-    .st1{animation:rise .8s .08s both}
-    .st2{animation:rise .8s .18s both}
-    .st3{animation:rise .8s .28s both}
-    .st4{animation:rise .8s .38s both}
-    .st5{animation:rise .8s .48s both}
-
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:40;
-      backdrop-filter:blur(12px);
-      background:rgba(255,250,243,.78);
-      border-bottom:1px solid rgba(25,23,19,.08);
-    }
-
-    .topbar-inner{
-      min-height:78px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-    }
-
-    .brand{
-      display:flex;
-      gap:14px;
-      align-items:center;
-    }
-
-    .mark{
-      width:46px;height:46px;border-radius:16px;
-      background:linear-gradient(135deg, var(--olive), var(--terracotta));
-      box-shadow:0 14px 30px rgba(75,107,67,.18), inset 0 1px 0 rgba(255,255,255,.38);
-      position:relative; overflow:hidden;
-    }
-    .mark::before,.mark::after{
-      content:"";
-      position:absolute;
-      background:rgba(255,255,255,.22);
-      border-radius:999px;
-    }
-    .mark::before{width:64px;height:12px;left:-8px;top:12px;transform:rotate(-28deg)}
-    .mark::after{width:50px;height:10px;right:-8px;bottom:12px;transform:rotate(-28deg)}
-
-    .brand h1{
-      margin:0;
-      font-family:"Space Grotesk", sans-serif;
-      font-size:1.04rem;
-      letter-spacing:-.04em;
-    }
-
-    .brand small{
-      display:block;
-      margin-top:4px;
-      font-size:.76rem;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      color:var(--muted);
-      font-weight:800;
-    }
-
-    .nav{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .nav a{
-      padding:10px 14px;
-      border-radius:999px;
-      color:var(--muted);
-      font-weight:800;
-      font-size:.92rem;
-      transition:.25s ease;
-    }
-    .nav a:hover{
-      background:rgba(75,107,67,.10);
-      color:var(--ink);
-      transform:translateY(-1px);
-    }
-
-    .menu-btn{
-      display:none;
-      border:none;
-      width:46px;height:46px;border-radius:14px;
-      background:rgba(25,23,19,.06);
-      cursor:pointer;
-    }
-    .menu-btn span{
-      display:block;
-      width:20px;height:2px;background:var(--ink);
-      margin:4px auto;border-radius:2px;
-    }
-
-    .hero{
-      padding:28px 0 18px;
-    }
-
-    .hero-grid{
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:20px;
-    }
-
-    .panel{
-      background:rgba(255,250,243,.76);
-      border:1px solid rgba(25,23,19,.08);
-      border-radius:28px;
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(10px);
-    }
-
-    .hero-main{
-      padding:clamp(24px, 4vw, 44px);
-      min-height:460px;
-      position:relative;
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      isolation:isolate;
-    }
-
-    .hero-main::after{
-      content:"";
-      position:absolute;
-      right:-7%;
-      bottom:-14%;
-      width:320px;
-      height:320px;
-      border-radius:42px;
-      background:
-        radial-gradient(circle at 35% 35%, rgba(255,255,255,.55), transparent 40%),
-        linear-gradient(135deg, rgba(189,101,68,.75), rgba(75,107,67,.92));
-      transform:rotate(18deg);
-      z-index:-1;
-    }
-
-    .eyebrow{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      width:max-content;
-      padding:8px 14px;
-      border-radius:999px;
-      background:rgba(255,255,255,.58);
-      border:1px solid rgba(25,23,19,.08);
-      color:var(--olive);
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      font-size:.8rem;
-      font-weight:900;
-    }
-
-    .eyebrow::before{
-      content:"";
-      width:10px;height:10px;border-radius:50%;
-      background:var(--olive);
-      box-shadow:0 0 0 6px rgba(75,107,67,.12);
-    }
-
-    .hero-title{
-      margin:16px 0 12px;
-      font-family:"Space Grotesk", sans-serif;
-      font-size:clamp(2.4rem, 5vw, 5.2rem);
-      line-height:.95;
-      letter-spacing:-.06em;
-      max-width:11ch;
-    }
-
-    .hero-text{
-      margin:0;
-      max-width:60ch;
-      color:var(--muted);
-      line-height:1.8;
-      font-size:1rem;
-    }
-
-    .hero-actions{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top:24px;
-    }
-
-    .btn{
-      border:none;
-      cursor:pointer;
-      border-radius:18px;
-      padding:14px 18px;
-      font-weight:900;
-      transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
-    }
-    .btn:active{transform:translateY(1px) scale(.98)}
-    .btn-primary{
-      background:var(--ink);
-      color:#fff;
-      box-shadow:0 14px 30px rgba(25,23,19,.18);
-    }
-    .btn-primary:hover{
-      transform:translateY(-2px);
-      box-shadow:0 18px 34px rgba(25,23,19,.24);
-    }
-    .btn-secondary{
-      background:rgba(255,255,255,.74);
-      color:var(--ink);
-      border:1px solid rgba(25,23,19,.10);
-    }
-    .btn-secondary:hover{
-      background:rgba(75,107,67,.09);
-      transform:translateY(-2px);
-    }
-
-    .metric-row{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:12px;
-      margin-top:26px;
-    }
-
-    .metric{
-      padding:16px;
-      border-radius:18px;
-      border:1px solid rgba(25,23,19,.08);
-      background:rgba(255,255,255,.55);
-    }
-    .metric strong{
-      display:block;
-      font-family:"Space Grotesk", sans-serif;
-      font-size:1.7rem;
-      letter-spacing:-.05em;
-    }
-    .metric span{
-      display:block;
-      color:var(--muted);
-      font-weight:700;
-      font-size:.86rem;
-      margin-top:4px;
-    }
-
-    .hero-side{
-      padding:20px;
-      display:grid;
-      gap:16px;
-      align-content:start;
-    }
-
-    .section-title{
-      margin:0;
-      font-family:"Space Grotesk", sans-serif;
-      font-size:1.2rem;
-      letter-spacing:-.04em;
-    }
-
-    .muted{
-      color:var(--muted);
-      line-height:1.7;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      width:max-content;
-      padding:8px 12px;
-      border-radius:999px;
-      background:rgba(75,107,67,.12);
-      color:var(--olive);
-      font-size:.78rem;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
-    .badge.gold{
-      background:rgba(184,150,88,.14);
-      color:#83652a;
-    }
-
-    .stack{display:grid; gap:14px}
-
-    .tile{
-      padding:16px;
-      border-radius:18px;
-      background:rgba(255,255,255,.58);
-      border:1px solid rgba(25,23,19,.08);
-    }
-
-    .tile h3{
-      margin:0 0 8px;
-      font-size:1rem;
-    }
-
-    .tile p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.7;
-      font-size:.92rem;
-    }
-
-    .section{
-      padding:14px 0;
-    }
-
-    .head{
-      display:flex;
-      justify-content:space-between;
-      align-items:end;
-      gap:16px;
-      margin-bottom:18px;
-    }
-
-    .head p{
-      margin:8px 0 0;
-      color:var(--muted);
-      line-height:1.8;
-      max-width:70ch;
-    }
-
-    .grid-2{
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:20px;
-    }
-
-    .content{
-      padding:22px;
-    }
-
-    .checklist{
-      display:grid;
-      gap:12px;
-      margin-top:14px;
-    }
-
-    .check{
-      display:grid;
-      grid-template-columns:auto 1fr;
-      gap:12px;
-      align-items:start;
-      padding:14px 0;
-      border-bottom:1px dashed rgba(25,23,19,.14);
-    }
-    .check:last-child{border-bottom:none}
-    .check i{
-      width:34px;height:34px;border-radius:12px;
-      display:grid;place-items:center;
-      background:linear-gradient(135deg, var(--olive), var(--terracotta));
-      color:#fff; font-style:normal; font-weight:900;
-      box-shadow:0 10px 16px rgba(75,107,67,.14);
-    }
-    .check h4{
-      margin:0 0 4px;
-      font-size:.96rem;
-    }
-    .check p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.7;
-      font-size:.9rem;
-    }
-
-    .codebox{
-      background:#1b1a18;
-      color:#f7f0e4;
-      border-radius:22px;
-      padding:18px;
-      border:1px solid rgba(255,255,255,.06);
-      box-shadow:0 20px 40px rgba(27,26,24,.2);
-      overflow:auto;
-      position:relative;
-    }
-
-    .codehead{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      margin-bottom:12px;
-      color:#d0c3b0;
-      font-size:.84rem;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
-    pre{
-      margin:0;
-      white-space:pre-wrap;
-      word-break:break-word;
-      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size:.88rem;
-      line-height:1.7;
-    }
-
-    .copy-btn{
-      border:none;
-      cursor:pointer;
-      border-radius:12px;
-      padding:10px 12px;
-      font-weight:900;
-      background:rgba(255,255,255,.08);
-      color:#fff;
-      transition:.22s ease;
-    }
-    .copy-btn:hover{
-      background:rgba(255,255,255,.14);
-      transform:translateY(-1px);
-    }
-
-    .schema{
-      display:grid;
-      gap:12px;
-      margin-top:16px;
-    }
-
-    .schema-item{
-      padding:16px;
-      border-radius:18px;
-      background:rgba(255,255,255,.56);
-      border:1px solid rgba(25,23,19,.08);
-    }
-
-    .schema-item strong{
-      display:block;
-      font-family:"Space Grotesk", sans-serif;
-      letter-spacing:-.03em;
-      margin-bottom:8px;
-      font-size:1.02rem;
-    }
-
-    .schema-item ul{
-      margin:0;
-      padding-left:18px;
-      color:var(--muted);
-      line-height:1.75;
-      font-size:.92rem;
-    }
-
-    .steps{
-      counter-reset:step;
-      display:grid;
-      gap:14px;
-      margin-top:12px;
-    }
-
-    .step{
-      position:relative;
-      padding:18px 18px 18px 66px;
-      border-radius:18px;
-      background:rgba(255,255,255,.58);
-      border:1px solid rgba(25,23,19,.08);
-    }
-
-    .step::before{
-      counter-increment:step;
-      content:counter(step);
-      position:absolute;
-      left:16px; top:16px;
-      width:36px;height:36px;border-radius:12px;
-      display:grid;place-items:center;
-      background:var(--ink);
-      color:#fff;font-weight:900;
-      font-family:"Space Grotesk", sans-serif;
-    }
-
-    .step h4{
-      margin:0 0 6px;
-      font-size:1rem;
-    }
-    .step p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.75;
-      font-size:.92rem;
-    }
-
-    .footer{
-      padding:24px 0 38px;
-    }
-
-    .footer-box{
-      padding:22px;
-      border-radius:24px;
-      background:rgba(255,250,243,.75);
-      border:1px solid rgba(25,23,19,.08);
-      box-shadow:var(--shadow);
-      display:flex;
-      justify-content:space-between;
-      gap:16px;
-      flex-wrap:wrap;
-      color:var(--muted);
-    }
-
-    .footer-box strong{color:var(--ink); display:block; margin-bottom:6px}
-
-    @media (max-width: 1080px){
-      .hero-grid,.grid-2{grid-template-columns:1fr}
-    }
-
-    @media (max-width: 860px){
-      .nav{
-        display:none;
-        position:absolute;
-        top:78px; left:14px; right:14px;
-        background:rgba(255,250,243,.96);
-        border:1px solid rgba(25,23,19,.08);
-        border-radius:20px;
-        box-shadow:var(--shadow);
-        padding:12px;
-      }
-      .nav.open{display:grid}
-      .menu-btn{display:block}
-      .topbar-inner{position:relative}
-    }
-
-    @media (max-width: 640px){
-      .wrap{width:min(var(--max), calc(100% - 20px))}
-      .metric-row{grid-template-columns:1fr}
-      .panel{border-radius:22px}
-      .hero-main{min-height:auto}
-      .head{flex-direction:column; align-items:start}
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 <body>
   <header class="topbar">
     <div class="wrap topbar-inner">
       <div class="brand">
-        <div class="mark" aria-hidden="true"></div>
+        <div class="brand-mark" aria-hidden="true"></div>
         <div>
-          <h1>Agen APET Pandeglang</h1>
-          <small>Setup Gratis Firebase + GitHub Pages</small>
+          <h1>Agen APET Admin Firebase</h1>
+          <small>Super Admin & Admin Stokis</small>
         </div>
       </div>
 
-      <nav class="nav" id="navMenu" aria-label="Navigasi utama">
-        <a href="#ringkasan">Ringkasan</a>
-        <a href="#schema">Schema</a>
-        <a href="#langkah">Langkah</a>
-        <a href="#kode">Kode</a>
+      <nav class="desktop-nav" aria-label="Navigasi desktop">
+        <a href="#dashboard" class="active">Dashboard</a>
+        <a href="#auth">Login</a>
+        <a href="#modules">Modul</a>
+        <a href="#dataset">Data</a>
       </nav>
-
-      <button class="menu-btn" id="menuToggle" aria-label="Buka menu">
-        <span></span><span></span><span></span>
-      </button>
     </div>
   </header>
 
+  <div class="toast-wrap" id="toastWrap"></div>
+
   <main>
-    <section class="hero" id="ringkasan">
+    <section class="hero" id="dashboard">
       <div class="wrap hero-grid">
-        <article class="panel hero-main">
+        <article class="glass hero-main">
           <div>
-            <div class="eyebrow st1">Solusi Gratis Paling Praktis</div>
-            <h2 class="hero-title st2">Pakai GitHub Pages + Firebase.</h2>
+            <span class="eyebrow st1">GitHub Pages Live Ready</span>
+            <h2 class="hero-title st2">Sistem admin operasional untuk agen dan stokis.</h2>
             <p class="hero-text st3">
-              Untuk kebutuhan Agen APET Pandeglang, kombinasi paling ringan dan gratis adalah
-              <strong>frontend HTML/CSS/JS di GitHub Pages</strong> lalu data disimpan di
-              <strong>Firebase Firestore</strong>. Ini cocok untuk admin pusat, stokis, dan kurir
-              tanpa perlu sewa server di awal.
+              Project ini disiapkan untuk berjalan di GitHub Pages Anda
+              <strong>https://deskawps23.github.io/Agen-Apet/</strong>
+              dengan backend Firebase untuk login, role, CRUD data, upload foto, dan GPS.
             </p>
-            <div class="hero-actions st4">
-              <a href="#schema" class="btn btn-primary">Lihat Struktur Database</a>
-              <a href="#kode" class="btn btn-secondary">Salin Kode Firebase</a>
-            </div>
           </div>
 
-          <div class="metric-row st5">
+          <div class="hero-metrics st4">
             <div class="metric">
-              <strong>35</strong>
-              <span>Kecamatan</span>
+              <strong>Firebase</strong>
+              <span>Auth, Firestore, Storage</span>
             </div>
             <div class="metric">
-              <strong>339</strong>
-              <span>Desa / Kelurahan</span>
+              <strong>2 Role</strong>
+              <span>super_admin & admin_stokis</span>
             </div>
             <div class="metric">
-              <strong>339+</strong>
-              <span>Stokis & kurir area</span>
+              <strong>Mobile Ready</strong>
+              <span>Card layout di HP</span>
             </div>
           </div>
         </article>
 
-        <aside class="panel hero-side">
-          <span class="badge">Yang Anda punya sekarang</span>
-          <div class="stack">
-            <div class="tile">
-              <h3>GitHub Pages sudah live</h3>
-              <p>Repository Anda sudah aktif di GitHub Pages, jadi frontend bisa langsung dipakai untuk aplikasi admin.</p>
-            </div>
-            <div class="tile">
-              <h3>Firebase juga sudah tersedia</h3>
-              <p>Dari konteks yang Anda buka, Anda sudah punya project Firebase. Tinggal dibuat Firestore dan dihubungkan ke website.</p>
-            </div>
-            <div class="tile">
-              <h3>Alternatif gratis lain</h3>
-              <p>Kalau mau, Google Apps Script + Google Sheets juga bisa dipakai gratis. Tapi untuk realtime dan struktur aplikasi, Firebase lebih nyaman.</p>
-            </div>
+        <aside class="glass hero-side">
+          <div class="mini">
+            <h3>Site Anda sudah live</h3>
+            <p>GitHub Pages repo <strong>Agen-Apet</strong> sudah aktif dari branch <strong>main</strong> dan folder <strong>/root</strong>.</p>
           </div>
-          <span class="badge gold">Saran: mulai dari Firestore dulu</span>
+          <div class="mini">
+            <h3>HTTPS aktif</h3>
+            <p>Karena GitHub Pages sudah pakai HTTPS, browser mobile dapat meminta izin lokasi untuk fitur GPS.</p>
+          </div>
+          <div class="mini">
+            <h3>Langsung dipakai</h3>
+            <p>Setelah Anda isi config Firebase, sistem ini bisa langsung diuji untuk login, tambah data, edit, hapus, dan upload foto.</p>
+          </div>
         </aside>
       </div>
     </section>
 
-    <section class="section" id="schema">
+    <section class="section" id="auth">
       <div class="wrap">
-        <div class="head reveal">
+        <div class="section-head reveal">
           <div>
-            <h2 class="section-title">Struktur database Firebase yang saya sarankan</h2>
-            <p>
-              Karena Firestore bersifat dokumen, struktur paling aman adalah memisahkan data master wilayah,
-              data stokis, data kurir, dan transaksi distribusi. Ini tetap sederhana, hemat query, dan gampang dipakai di dashboard.
-            </p>
+            <h2 class="section-title">Login Firebase</h2>
+            <p>Gunakan login email dan password. Role user dibaca dari collection <strong>users</strong>.</p>
           </div>
-          <span class="badge">Firestore Schema</span>
+          <span class="badge">Authentication</span>
         </div>
 
-        <div class="grid-2">
-          <article class="panel content reveal">
-            <h3 class="section-title">Collection utama</h3>
-            <div class="schema">
-              <div class="schema-item">
-                <strong>1. kecamatan</strong>
-                <ul>
-                  <li>nama</li>
-                  <li>kode</li>
-                  <li>aktif</li>
-                </ul>
-              </div>
-
-              <div class="schema-item">
-                <strong>2. desa</strong>
-                <ul>
-                  <li>nama</li>
-                  <li>jenis: Desa / Kelurahan</li>
-                  <li>kecamatanId</li>
-                  <li>kecamatanNama</li>
-                  <li>aktif</li>
-                </ul>
-              </div>
-
-              <div class="schema-item">
-                <strong>3. stokis</strong>
-                <ul>
-                  <li>kodeStokis</li>
-                  <li>namaStokis</li>
-                  <li>kecamatanId</li>
-                  <li>desaId</li>
-                  <li>penanggungJawab</li>
-                  <li>noHp</li>
-                  <li>alamat</li>
-                  <li>status</li>
-                  <li>totalStok</li>
-                </ul>
-              </div>
-
-              <div class="schema-item">
-                <strong>4. kurir</strong>
-                <ul>
-                  <li>stokisId</li>
-                  <li>namaKurir</li>
-                  <li>noHp</li>
-                  <li>kendaraan</li>
-                  <li>status</li>
-                </ul>
-              </div>
-
-              <div class="schema-item">
-                <strong>5. distribusi</strong>
-                <ul>
-                  <li>stokisId</li>
-                  <li>kurirId</li>
-                  <li>tujuan: Warga / Dapur MBG</li>
-                  <li>namaPenerima</li>
-                  <li>jumlah</li>
-                  <li>statusPengiriman</li>
-                  <li>tanggalKirim</li>
-                </ul>
-              </div>
+        <div class="glass login-card reveal" id="loginSection">
+          <div class="grid-2">
+            <div class="field">
+              <label>Email</label>
+              <input id="loginEmail" class="input" type="email" placeholder="email@domain.com">
             </div>
-          </article>
-
-          <aside class="panel content reveal">
-            <h3 class="section-title">Kenapa model ini bagus</h3>
-            <div class="checklist">
-              <div class="check">
-                <i>✓</i>
-                <div>
-                  <h4>Mudah difilter</h4>
-                  <p>Admin bisa filter berdasarkan kecamatan, desa, stokis, atau status stok dengan struktur yang tetap jelas.</p>
-                </div>
-              </div>
-              <div class="check">
-                <i>✓</i>
-                <div>
-                  <h4>Mudah ditambah user</h4>
-                  <p>Nanti bisa ditambah collection <strong>users</strong> untuk Super Admin, Admin Kecamatan, Admin Stokis, dan Kurir.</p>
-                </div>
-              </div>
-              <div class="check">
-                <i>✓</i>
-                <div>
-                  <h4>Cocok untuk gratis</h4>
-                  <p>Firestore free tier cukup untuk tahap awal, apalagi jika query dibuat sederhana dan tidak terlalu boros listener realtime.</p>
-                </div>
-              </div>
-              <div class="check">
-                <i>✓</i>
-                <div>
-                  <h4>Cocok dengan GitHub Pages</h4>
-                  <p>Karena frontend Anda statis, website bisa tetap gratis penuh dan langsung bicara ke Firebase dari browser.</p>
-                </div>
-              </div>
+            <div class="field">
+              <label>Password</label>
+              <input id="loginPassword" class="input" type="password" placeholder="Password">
             </div>
-          </aside>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="langkah">
-      <div class="wrap">
-        <div class="head reveal">
-          <div>
-            <h2 class="section-title">Langkah setup yang harus Anda lakukan</h2>
-            <p>
-              Saya buat singkat dan praktis supaya Anda bisa langsung jalan. Setelah langkah ini, website GitHub Pages Anda
-              bisa mulai membaca dan menulis data ke Firebase.
-            </p>
           </div>
-          <span class="badge">Tahap Implementasi</span>
+          <div class="actions" style="margin-top:14px">
+            <button class="btn btn-primary" id="loginBtn">Login</button>
+            <button class="btn btn-secondary" id="fillDemoBtn" type="button">Isi Contoh</button>
+          </div>
+          <p class="hint" style="margin-top:12px">
+            User login dibuat di Firebase Authentication, lalu profil role disimpan di Firestore collection <strong>users</strong>.
+          </p>
         </div>
 
-        <div class="panel content reveal">
-          <div class="steps">
-            <div class="step">
-              <h4>Buka Firebase Console</h4>
-              <p>Masuk ke project Firebase Anda, lalu aktifkan <strong>Firestore Database</strong> dalam mode test terlebih dahulu untuk pengembangan awal.</p>
+        <div class="glass login-card hidden reveal" id="sessionSection">
+          <div class="section-head" style="margin-bottom:10px">
+            <div>
+              <h2 class="section-title" id="sessionTitle">Sesi aktif</h2>
+              <p id="sessionDesc">Anda sudah login.</p>
             </div>
-            <div class="step">
-              <h4>Tambahkan Web App</h4>
-              <p>Di Project Settings, buat atau pakai <strong>Web App</strong> lalu salin object <strong>firebaseConfig</strong>.</p>
-            </div>
-            <div class="step">
-              <h4>Buat collection utama</h4>
-              <p>Buat collection: <strong>kecamatan</strong>, <strong>desa</strong>, <strong>stokis</strong>, <strong>kurir</strong>, dan <strong>distribusi</strong>.</p>
-            </div>
-            <div class="step">
-              <h4>Tempelkan config ke website</h4>
-              <p>Masukkan config Firebase ke file HTML aplikasi Anda, lalu import SDK Firebase versi web modular.</p>
-            </div>
-            <div class="step">
-              <h4>Deploy ke GitHub Pages</h4>
-              <p>Commit file ke repository <strong>Agen-Apet-Pandeglang-</strong>. Karena GitHub Pages Anda sudah aktif, perubahan akan langsung ter-publish.</p>
-            </div>
-            <div class="step">
-              <h4>Set rules dasar</h4>
-              <p>Setelah testing berhasil, jangan biarkan mode test terlalu lama. Atur rules agar hanya user tertentu yang bisa mengubah data.</p>
-            </div>
+            <span class="badge" id="sessionBadge">Logged In</span>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary" id="refreshDataBtn">Muat Ulang Data</button>
+            <button class="btn btn-danger" id="logoutBtn">Logout</button>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="kode">
+    <section class="section hidden" id="appSection">
       <div class="wrap">
-        <div class="head reveal">
+        <div class="section-head reveal">
           <div>
-            <h2 class="section-title">Kode dasar Firebase untuk aplikasi Anda</h2>
+            <h2 class="section-title">Panel admin operasional</h2>
             <p>
-              Di bawah ini adalah starter code yang bisa langsung Anda tempel ke aplikasi HTML Anda.
-              Tinggal ganti isi <strong>firebaseConfig</strong> dengan milik project Firebase Anda.
+              Super admin dapat mengelola semua data.
+              Admin stokis hanya mengelola data stokis dan kurir sesuai <strong>stokisId</strong>-nya.
             </p>
           </div>
-          <span class="badge">Starter Code</span>
+          <span class="badge">Role Based Access</span>
         </div>
 
-        <div class="grid-2">
-          <article class="panel content reveal">
-            <div class="codebox">
-              <div class="codehead">
-                <span>firebase setup</span>
-                <button class="copy-btn" data-copy="codeFirebase">Salin</button>
-              </div>
-              <pre id="codeFirebase">&lt;script type="module"&gt;
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    getDocs,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "ISI_API_KEY_ANDA",
-    authDomain: "PROJECT-ID.firebaseapp.com",
-    projectId: "PROJECT-ID",
-    storageBucket: "PROJECT-ID.firebasestorage.app",
-    messagingSenderId: "ISI_SENDER_ID",
-    appId: "ISI_APP_ID"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  async function tambahStokis() {
-    try {
-      await addDoc(collection(db, "stokis"), {
-        kodeStokis: "STK-001",
-        namaStokis: "Stokis Labuan 01",
-        kecamatanId: "labuan",
-        kecamatanNama: "Labuan",
-        desaId: "labuan-kel",
-        desaNama: "Labuan",
-        penanggungJawab: "Asep",
-        noHp: "081234567890",
-        alamat: "Jl. Raya Labuan",
-        status: "Aktif",
-        totalStok: 320,
-        createdAt: serverTimestamp()
-      });
-      alert("Data stokis berhasil ditambahkan");
-    } catch (error) {
-      console.error("Gagal tambah stokis:", error);
-    }
-  }
-
-  async function ambilStokis() {
-    const querySnapshot = await getDocs(collection(db, "stokis"));
-    const data = [];
-    querySnapshot.forEach((doc) =&gt; {
-      data.push({ id: doc.id, ...doc.data() });
-    });
-    console.log("Data stokis:", data);
-  }
-
-  window.tambahStokis = tambahStokis;
-  window.ambilStokis = ambilStokis;
-&lt;/script&gt;</pre>
-            </div>
-          </article>
-
-          <aside class="panel content reveal">
-            <div class="codebox">
-              <div class="codehead">
-                <span>contoh data dokumen stokis</span>
-                <button class="copy-btn" data-copy="codeDoc">Salin</button>
-              </div>
-              <pre id="codeDoc">{
-  "kodeStokis": "STK-001",
-  "namaStokis": "Stokis Labuan 01",
-  "kecamatanId": "labuan",
-  "kecamatanNama": "Labuan",
-  "desaId": "labuan-kel",
-  "desaNama": "Labuan",
-  "penanggungJawab": "Asep",
-  "noHp": "081234567890",
-  "alamat": "Jl. Raya Labuan",
-  "status": "Aktif",
-  "totalStok": 320,
-  "createdAt": "serverTimestamp"
-}</pre>
+        <div class="app-shell">
+          <aside class="glass sidebar reveal">
+            <div class="profile-card">
+              <strong id="currentRoleTitle">Role: -</strong>
+              <small id="currentRoleDesc">Belum ada sesi aktif.</small>
             </div>
 
-            <div class="checklist" style="margin-top:16px">
-              <div class="check">
-                <i>!</i>
-                <div>
-                  <h4>Catatan penting</h4>
-                  <p>Jangan taruh data rahasia backend di frontend. Firebase config web memang aman untuk ditampilkan, tapi rules Firestore tetap wajib diatur.</p>
-                </div>
-              </div>
-              <div class="check">
-                <i>i</i>
-                <div>
-                  <h4>Mode pengembangan</h4>
-                  <p>Untuk awal, Anda bisa testing dengan mode test. Setelah aplikasi jalan, saya sarankan saya bantu buatkan rules yang aman.</p>
-                </div>
-              </div>
+            <div class="side-menu">
+              <button class="role-switch active" data-view="super">Panel Super Admin</button>
+              <button class="role-switch" data-view="stokis">Panel Admin Stokis</button>
+            </div>
+
+            <div class="mini">
+              <h3>Status koneksi</h3>
+              <p id="connectionInfo">Menunggu autentikasi Firebase.</p>
             </div>
           </aside>
-        </div>
-      </div>
-    </section>
 
-    <section class="section">
-      <div class="wrap">
-        <div class="head reveal">
-          <div>
-            <h2 class="section-title">Alternatif gratis: Google Apps Script + Google Sheets</h2>
-            <p>
-              Karena Anda juga membuka referensi Apps Script, opsi ini juga gratis dan cukup bagus kalau Anda lebih nyaman
-              mengelola data seperti Excel. Tapi untuk aplikasi modern dan realtime, Firebase tetap lebih unggul.
-            </p>
+          <div class="content">
+            <section class="glass panel-pad reveal">
+              <div class="section-head" style="margin-bottom:14px">
+                <div>
+                  <h2 class="section-title">Ringkasan data</h2>
+                  <p>Statistik ini diambil dari Firestore sesuai role yang login.</p>
+                </div>
+                <span class="badge">Live Count</span>
+              </div>
+
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <strong id="countUsers">0</strong>
+                  <span>Total users</span>
+                </div>
+                <div class="stat-card">
+                  <strong id="countStokis">0</strong>
+                  <span>Total stokis</span>
+                </div>
+                <div class="stat-card">
+                  <strong id="countKurir">0</strong>
+                  <span>Total kurir</span>
+                </div>
+                <div class="stat-card">
+                  <strong id="countWilayah">0</strong>
+                  <span>Total wilayah</span>
+                </div>
+              </div>
+            </section>
+
+            <section id="superView" class="glass panel-pad reveal">
+              <div class="section-head" style="margin-bottom:12px">
+                <div>
+                  <h2 class="section-title">Panel Super Admin</h2>
+                  <p>Kelola semua data user, stokis, kurir, wilayah, dan distribusi.</p>
+                </div>
+                <span class="badge">Full Access</span>
+              </div>
+
+              <div class="tabs">
+                <button class="tab-btn active" data-panel="usersPanel">Users</button>
+                <button class="tab-btn" data-panel="stokisPanel">Stokis</button>
+                <button class="tab-btn" data-panel="kurirPanel">Kurir</button>
+                <button class="tab-btn" data-panel="wilayahPanel">Wilayah</button>
+                <button class="tab-btn" data-panel="distribusiPanel">Distribusi</button>
+              </div>
+
+              <div id="usersPanel" class="form-panel active">
+                <div class="grid-3">
+                  <div class="field">
+                    <label>Nama User</label>
+                    <input id="userNama" class="input" type="text" placeholder="Nama admin / petugas">
+                  </div>
+                  <div class="field">
+                    <label>Email</label>
+                    <input id="userEmail" class="input" type="email" placeholder="email@domain.com">
+                  </div>
+                  <div class="field">
+                    <label>Password Awal</label>
+                    <input id="userPassword" class="input" type="password" placeholder="Minimal 6 karakter">
+                  </div>
+                  <div class="field">
+                    <label>Role</label>
+                    <select id="userRole" class="select">
+                      <option value="super_admin">super_admin</option>
+                      <option value="admin_stokis">admin_stokis</option>
+                      <option value="kurir">kurir</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Stokis ID</label>
+                    <input id="userStokisId" class="input" type="text" placeholder="Opsional">
+                  </div>
+                  <div class="field">
+                    <label>Status</label>
+                    <select id="userAktif" class="select">
+                      <option value="true">Aktif</option>
+                      <option value="false">Nonaktif</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="actions" style="margin-top:14px">
+                  <button class="btn btn-primary" id="saveUserBtn">Simpan User</button>
+                  <button class="btn btn-secondary" type="button" data-reset-panel="usersPanel">Reset</button>
+                </div>
+              </div>
+
+              <div id="stokisPanel" class="form-panel">
+                <div class="grid-3">
+                  <div class="field">
+                    <label>Kode Stokis</label>
+                    <input id="stokisKode" class="input" type="text" placeholder="STK-001">
+                  </div>
+                  <div class="field">
+                    <label>Nama Stokis</label>
+                    <input id="stokisNama" class="input" type="text" placeholder="Stokis Labuan 01">
+                  </div>
+                  <div class="field">
+                    <label>Penanggung Jawab</label>
+                    <input id="stokisPj" class="input" type="text" placeholder="Nama PJ">
+                  </div>
+                  <div class="field">
+                    <label>No HP</label>
+                    <input id="stokisHp" class="input" type="text" placeholder="08xxxxxxxxxx">
+                  </div>
+                  <div class="field">
+                    <label>Kecamatan ID</label>
+                    <input id="stokisKecamatanId" class="input" type="text" placeholder="labuan">
+                  </div>
+                  <div class="field">
+                    <label>Kecamatan Nama</label>
+                    <input id="stokisKecamatanNama" class="input" type="text" placeholder="Labuan">
+                  </div>
+                  <div class="field">
+                    <label>Desa ID</label>
+                    <input id="stokisDesaId" class="input" type="text" placeholder="labuan-kel">
+                  </div>
+                  <div class="field">
+                    <label>Desa Nama</label>
+                    <input id="stokisDesaNama" class="input" type="text" placeholder="Labuan">
+                  </div>
+                  <div class="field">
+                    <label>Total Stok</label>
+                    <input id="stokisTotalStok" class="input" type="number" placeholder="320">
+                  </div>
+                  <div class="field full">
+                    <label>Alamat</label>
+                    <textarea id="stokisAlamat" class="textarea" placeholder="Alamat lengkap stokis"></textarea>
+                  </div>
+                  <div class="field">
+                    <label>Status</label>
+                    <select id="stokisStatus" class="select">
+                      <option value="Aktif">Aktif</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Nonaktif">Nonaktif</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Latitude</label>
+                    <input id="stokisLat" class="input" type="text" placeholder="-6.123456">
+                  </div>
+                  <div class="field">
+                    <label>Longitude</label>
+                    <input id="stokisLng" class="input" type="text" placeholder="105.678901">
+                  </div>
+                  <div class="field">
+                    <label>Foto Stokis</label>
+                    <input id="stokisFoto" class="input" type="file" accept="image/*">
+                  </div>
+                </div>
+                <div class="actions" style="margin-top:14px">
+                  <button class="btn btn-secondary" type="button" data-gps="stokis">Ambil GPS</button>
+                  <button class="btn btn-primary" id="saveStokisBtn">Simpan Stokis</button>
+                </div>
+              </div>
+
+              <div id="kurirPanel" class="form-panel">
+                <div class="grid-3">
+                  <div class="field">
+                    <label>Kode Kurir</label>
+                    <input id="kurirKode" class="input" type="text" placeholder="KR-001">
+                  </div>
+                  <div class="field">
+                    <label>Nama Kurir</label>
+                    <input id="kurirNama" class="input" type="text" placeholder="Nama kurir">
+                  </div>
+                  <div class="field">
+                    <label>Stokis ID</label>
+                    <input id="kurirStokisId" class="input" type="text" placeholder="stks-labuan-01">
+                  </div>
+                  <div class="field">
+                    <label>No HP</label>
+                    <input id="kurirHp" class="input" type="text" placeholder="08xxxxxxxxxx">
+                  </div>
+                  <div class="field">
+                    <label>Kendaraan</label>
+                    <select id="kurirKendaraan" class="select">
+                      <option value="Motor">Motor</option>
+                      <option value="Mobil">Mobil</option>
+                      <option value="Pickup">Pickup</option>
+                      <option value="Becak">Becak</option>
+                      <option value="Lainnya">Lainnya</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Status</label>
+                    <select id="kurirStatus" class="select">
+                      <option value="Aktif">Aktif</option>
+                      <option value="Nonaktif">Nonaktif</option>
+                      <option value="Cuti">Cuti</option>
+                      <option value="Pending">Pending</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Area Layanan</label>
+                    <input id="kurirArea" class="input" type="text" placeholder="Warga / Dapur MBG">
+                  </div>
+                  <div class="field">
+                    <label>Latitude</label>
+                    <input id="kurirLat" class="input" type="text" placeholder="-6.123456">
+                  </div>
+                  <div class="field">
+                    <label>Longitude</label>
+                    <input id="kurirLng" class="input" type="text" placeholder="105.678901">
+                  </div>
+                  <div class="field">
+                    <label>Foto Kurir</label>
+                    <input id="kurirFoto" class="input" type="file" accept="image/*">
+                  </div>
+                </div>
+                <div class="actions" style="margin-top:14px">
+                  <button class="btn btn-secondary" type="button" data-gps="kurir">Ambil GPS</button>
+                  <button class="btn btn-primary" id="saveKurirBtn">Simpan Kurir</button>
+                </div>
+              </div>
+
+              <div id="wilayahPanel" class="form-panel">
+                <div class="grid-3">
+                  <div class="field">
+                    <label>Kode Wilayah</label>
+                    <input id="wilayahKode" class="input" type="text" placeholder="KCM-001">
+                  </div>
+                  <div class="field">
+                    <label>Nama Wilayah</label>
+                    <input id="wilayahNama" class="input" type="text" placeholder="Labuan">
+                  </div>
+                  <div class="field">
+                    <label>Jenis</label>
+                    <select id="wilayahJenis" class="select">
+                      <option value="Kecamatan">Kecamatan</option>
+                      <option value="Desa">Desa</option>
+                      <option value="Kelurahan">Kelurahan</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Parent ID</label>
+                    <input id="wilayahParentId" class="input" type="text" placeholder="pandeglang / labuan">
+                  </div>
+                  <div class="field">
+                    <label>Parent Nama</label>
+                    <input id="wilayahParentNama" class="input" type="text" placeholder="Pandeglang">
+                  </div>
+                  <div class="field">
+                    <label>Status</label>
+                    <select id="wilayahAktif" class="select">
+                      <option value="true">Aktif</option>
+                      <option value="false">Nonaktif</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Latitude</label>
+                    <input id="wilayahLat" class="input" type="text" placeholder="-6.123456">
+                  </div>
+                  <div class="field">
+                    <label>Longitude</label>
+                    <input id="wilayahLng" class="input" type="text" placeholder="105.678901">
+                  </div>
+                  <div class="field full">
+                    <label>Metadata JSON</label>
+                    <textarea id="wilayahMeta" class="textarea" placeholder='{"validasi":"Belum diverifikasi","sumber":"Admin Kabupaten"}'></textarea>
+                  </div>
+                </div>
+                <div class="actions" style="margin-top:14px">
+                  <button class="btn btn-secondary" type="button" data-gps="wilayah">Ambil GPS</button>
+                  <button class="btn btn-primary" id="saveWilayahBtn">Simpan Wilayah</button>
+                </div>
+              </div>
+
+              <div id="distribusiPanel" class="form-panel">
+                <div class="grid-3">
+                  <div class="field">
+                    <label>Kode Distribusi</label>
+                    <input id="distribusiKode" class="input" type="text" placeholder="DSTR-001">
+                  </div>
+                  <div class="field">
+                    <label>Stokis ID</label>
+                    <input id="distribusiStokisId" class="input" type="text" placeholder="stks-labuan-01">
+                  </div>
+                  <div class="field">
+                    <label>Kurir ID</label>
+                    <input id="distribusiKurirId" class="input" type="text" placeholder="id dokumen kurir">
+                  </div>
+                  <div class="field">
+                    <label>Tujuan</label>
+                    <select id="distribusiTujuan" class="select">
+                      <option value="Warga">Warga</option>
+                      <option value="Dapur MBG">Dapur MBG</option>
+                      <option value="Lainnya">Lainnya</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Nama Penerima</label>
+                    <input id="distribusiPenerima" class="input" type="text" placeholder="Nama penerima">
+                  </div>
+                  <div class="field">
+                    <label>Jumlah</label>
+                    <input id="distribusiJumlah" class="input" type="number" placeholder="20">
+                  </div>
+                  <div class="field">
+                    <label>Status</label>
+                    <select id="distribusiStatus" class="select">
+                      <option value="Proses">Proses</option>
+                      <option value="Dikirim">Dikirim</option>
+                      <option value="Selesai">Selesai</option>
+                      <option value="Batal">Batal</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Tanggal Kirim</label>
+                    <input id="distribusiTanggal" class="input" type="datetime-local">
+                  </div>
+                  <div class="field full">
+                    <label>Catatan Distribusi</label>
+                    <textarea id="distribusiCatatan" class="textarea" placeholder="Catatan tambahan pengiriman"></textarea>
+                  </div>
+                </div>
+                <div class="actions" style="margin-top:14px">
+                  <button class="btn btn-primary" id="saveDistribusiBtn">Simpan Distribusi</button>
+                </div>
+              </div>
+            </section>
+
+            <section id="stokisView" class="glass panel-pad reveal hidden">
+              <div class="section-head" style="margin-bottom:12px">
+                <div>
+                  <h2 class="section-title">Panel Admin Stokis</h2>
+                  <p>Panel terbatas untuk stokis yang sedang login.</p>
+                </div>
+                <span class="badge">Scoped Access</span>
+              </div>
+
+              <div class="grid-2">
+                <div class="mini">
+                  <h3>Kelola profil stokis</h3>
+                  <p>Admin stokis dapat update data stokis sesuai <strong>stokisId</strong> sendiri.</p>
+                </div>
+                <div class="mini">
+                  <h3>Kelola kurir</h3>
+                  <p>Admin stokis dapat menambah dan mengelola kurir milik stokisnya sendiri.</p>
+                </div>
+              </div>
+
+              <div style="height:14px"></div>
+
+              <div class="grid-3">
+                <div class="field">
+                  <label>Stokis ID Aktif</label>
+                  <input id="myStokisId" class="input" type="text" readonly>
+                </div>
+                <div class="field">
+                  <label>Mode Akses</label>
+                  <input class="input" type="text" value="Admin Stokis" readonly>
+                </div>
+                <div class="field">
+                  <label>Status Sesi</label>
+                  <input id="stokisSessionState" class="input" type="text" value="Belum login" readonly>
+                </div>
+              </div>
+            </section>
+
+            <section class="glass table-shell reveal" id="dataset">
+              <div class="panel-pad">
+                <div class="section-head" style="margin-bottom:10px">
+                  <div>
+                    <h2 class="section-title">Data operasional</h2>
+                    <p>Data diambil langsung dari Firestore dan otomatis difilter berdasarkan role.</p>
+                  </div>
+                  <span class="badge">Realtime-ready Dataset</span>
+                </div>
+
+                <div class="toolbar">
+                  <div class="field">
+                    <label>Cari data</label>
+                    <input class="input" id="searchInput" type="text" placeholder="Cari nama, kode, status, stokis, kecamatan...">
+                  </div>
+                  <div class="field">
+                    <label>Jenis data</label>
+                    <select class="select" id="typeFilter">
+                      <option value="all">Semua</option>
+                      <option value="users">Users</option>
+                      <option value="stokis">Stokis</option>
+                      <option value="kurir">Kurir</option>
+                      <option value="wilayah">Wilayah</option>
+                      <option value="distribusi">Distribusi</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Status</label>
+                    <select class="select" id="statusFilter">
+                      <option value="all">Semua</option>
+                      <option value="aktif">Aktif</option>
+                      <option value="pending">Pending</option>
+                      <option value="nonaktif">Nonaktif</option>
+                      <option value="selesai">Selesai</option>
+                    </select>
+                  </div>
+                  <button class="btn btn-secondary" id="loadDataBtn">Muat Data</button>
+                  <button class="btn btn-dark" id="exportBtn">Ekspor JSON</button>
+                  <button class="btn btn-danger" id="openEditBtn">Edit Data</button>
+                </div>
+
+                <div class="inline-status" style="margin-top:12px" id="datasetInfo">
+                  Menunggu data Firestore...
+                </div>
+              </div>
+
+              <div class="mobile-scroll-hint">Mode mobile aktif: data ditampilkan sebagai kartu agar lebih nyaman dipakai dari HP.</div>
+
+              <div class="table-wrap">
+                <table aria-label="Tabel data operasional">
+                  <thead>
+                    <tr>
+                      <th style="min-width:120px">Jenis</th>
+                      <th style="min-width:150px">Kode / ID</th>
+                      <th style="min-width:190px">Nama</th>
+                      <th style="min-width:160px">Status / Role</th>
+                      <th style="min-width:190px">Scope</th>
+                      <th style="min-width:160px">Geo</th>
+                      <th style="min-width:150px">Foto</th>
+                      <th style="min-width:180px">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dataBody"></tbody>
+                </table>
+              </div>
+
+              <div class="mobile-card-list" id="mobileCardList"></div>
+            </section>
           </div>
-          <span class="badge gold">Alternatif</span>
-        </div>
-
-        <div class="grid-2">
-          <article class="panel content reveal">
-            <h3 class="section-title">Kapan pilih Apps Script</h3>
-            <div class="checklist">
-              <div class="check">
-                <i>✓</i>
-                <div>
-                  <h4>Jika admin suka spreadsheet</h4>
-                  <p>Data wilayah, stokis, dan kurir bisa diedit seperti Excel tanpa harus paham database.</p>
-                </div>
-              </div>
-              <div class="check">
-                <i>✓</i>
-                <div>
-                  <h4>Jika ingin backend gratis sederhana</h4>
-                  <p>Apps Script bisa jadi API kecil untuk website statis Anda.</p>
-                </div>
-              </div>
-              <div class="check">
-                <i>×</i>
-                <div>
-                  <h4>Kekurangannya</h4>
-                  <p>Tidak sekuat Firebase untuk realtime, role user, dan skalabilitas aplikasi lapangan.</p>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <aside class="panel content reveal">
-            <h3 class="section-title">Rekomendasi saya tetap</h3>
-            <p class="muted">
-              Untuk Agen APET Pandeglang, saya tetap menyarankan:
-            </p>
-            <div class="schema">
-              <div class="schema-item">
-                <strong>Frontend</strong>
-                <ul><li>GitHub Pages gratis</li></ul>
-              </div>
-              <div class="schema-item">
-                <strong>Database</strong>
-                <ul><li>Firebase Firestore gratis</li></ul>
-              </div>
-              <div class="schema-item">
-                <strong>Login</strong>
-                <ul><li>Firebase Authentication</li></ul>
-              </div>
-              <div class="schema-item">
-                <strong>Tahap berikutnya</strong>
-                <ul><li>Hubungkan dashboard HTML Anda ke Firestore</li></ul>
-              </div>
-            </div>
-          </aside>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="wrap">
-      <div class="footer-box reveal">
-        <div>
-          <strong>Status saat ini</strong>
-          <div>GitHub Pages Anda sudah live. Langkah berikutnya tinggal konekkan aplikasi ke Firestore.</div>
+  <div class="modal-backdrop" id="editModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 class="modal-title">Edit Data Firestore</h3>
+        <button class="btn btn-secondary" id="closeModalBtn" type="button">Tutup</button>
+      </div>
+
+      <input type="hidden" id="editCollection">
+      <input type="hidden" id="editDocId">
+      <input type="hidden" id="editFotoPath">
+
+      <div class="grid-3">
+        <div class="field">
+          <label>Collection</label>
+          <input id="editCollectionLabel" class="input" type="text" readonly>
         </div>
-        <div>
-          <strong>Langkah lanjutan yang bisa saya bantu</strong>
-          <div>Saya bisa lanjut buatkan versi dashboard Agen APET yang langsung tersambung ke Firebase.</div>
+        <div class="field">
+          <label>Kode / ID</label>
+          <input id="editCode" class="input" type="text" placeholder="Kode utama">
+        </div>
+        <div class="field">
+          <label>Status / Role</label>
+          <input id="editStatus" class="input" type="text" placeholder="Status">
+        </div>
+        <div class="field">
+          <label>Nama</label>
+          <input id="editName" class="input" type="text" placeholder="Nama utama">
+        </div>
+        <div class="field">
+          <label>Latitude</label>
+          <input id="editLat" class="input" type="text" placeholder="-6.123456">
+        </div>
+        <div class="field">
+          <label>Longitude</label>
+          <input id="editLng" class="input" type="text" placeholder="105.678901">
+        </div>
+        <div class="field full">
+          <label>Foto Baru (opsional)</label>
+          <input id="editFotoFile" class="input" type="file" accept="image/*">
+        </div>
+        <div class="field full">
+          <label>Metadata JSON</label>
+          <textarea id="editJson" class="textarea" placeholder='{"field":"value"}'></textarea>
         </div>
       </div>
+
+      <div class="actions" style="margin-top:14px">
+        <button class="btn btn-primary" id="saveEditBtn">Simpan Perubahan</button>
+        <button class="btn btn-secondary" type="button" data-gps="edit">Ambil GPS</button>
+        <button class="btn btn-danger" id="deleteEditBtn" type="button">Hapus Data</button>
+      </div>
     </div>
-  </footer>
+  </div>
 
-  <script>
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add("visible");
-      });
-    }, { threshold: 0.15 });
+  <nav class="bottom-nav" aria-label="Navigasi bawah mobile">
+    <a href="#dashboard" class="active">Dashboard</a>
+    <a href="#auth">Login</a>
+    <a href="#modules">Modul</a>
+    <a href="#dataset">Data</a>
+  </nav>
 
-    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
-
-    document.querySelectorAll(".copy-btn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const targetId = btn.getAttribute("data-copy");
-        const text = document.getElementById(targetId).innerText;
-        try {
-          await navigator.clipboard.writeText(text);
-          const old = btn.textContent;
-          btn.textContent = "Tersalin";
-          setTimeout(() => btn.textContent = old, 1400);
-        } catch (e) {
-          alert("Gagal menyalin kode.");
-        }
-      });
-    });
-
-    const menuToggle = document.getElementById("menuToggle");
-    const navMenu = document.getElementById("navMenu");
-    menuToggle.addEventListener("click", () => navMenu.classList.toggle("open"));
-    navMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => navMenu.classList.remove("open")));
-  </script>
+  <script type="module" src="./assets/js/app.js"></script>
 </body>
 </html>
