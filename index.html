@@ -52,7 +52,7 @@
     <h1>Agen-Apet-Pandeglang</h1>
     <p>Melayani masyarakat dan dapur MBG sekabupaten Pandeglang</p>
     <hr>
-    <input type="text" id="user" placeholder="Username" value="admin@apetone.com">
+    <input type="text" id="user" placeholder="Email" value="admin@apetone.com">
     <input type="password" id="pass" placeholder="Password" value="admin123">
     <button onclick="login()">Login</button>
     <div class="hint">Email: admin@apetone.com | Password: admin123</div>
@@ -128,19 +128,18 @@
 <script>
 // ===== FIREBASE CONFIG =====
 const firebaseConfig = {
-  apiKey: "AIzaSyA2L1XvGkuXAZ7od6QrcAzriRw-Ydprid4",
+  apiKey: "GANTI_DENGAN_API_KEY_KAMU",
   authDomain: "agen-apeet-pandeglang.firebaseapp.com",
   projectId: "agen-apeet-pandeglang",
   storageBucket: "agen-apeet-pandeglang.firebasestorage.app",
-  messagingSenderId: "531140473833",
-  appId: "1:531140473833:web:49ce2afd98208619d89178"
+  messagingSenderId: "GANTI_DENGAN_MESSAGING_SENDER_ID_KAMU",
+  appId: "GANTI_DENGAN_APP_ID_KAMU"
 };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// ===== TOAST =====
 function showToast(msg, isError = false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -150,11 +149,9 @@ function showToast(msg, isError = false) {
   t._timer = setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
-// ===== LOGIN =====
 function login() {
   const email = document.getElementById('user').value;
   const password = document.getElementById('pass').value;
-
   auth.signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
       document.getElementById('loginPage').style.display = 'none';
@@ -167,7 +164,6 @@ function login() {
     });
 }
 
-// ===== LOGOUT =====
 function logout() {
   auth.signOut().then(() => {
     document.getElementById('loginPage').style.display = 'flex';
@@ -176,59 +172,47 @@ function logout() {
   });
 }
 
-// ===== LOAD DATA =====
 function loadData() {
   db.collection('kurir').get().then((snapshot) => {
     const data = [];
     snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
-    renderKurir(data);
+    const grid = document.getElementById('kurirGrid');
+    if (data.length === 0) {
+      grid.innerHTML = '<div style="text-align:center;color:#999;padding:20px">Belum ada kurir</div>';
+    } else {
+      let html = '';
+      for (let i = 0; i < data.length; i++) {
+        html += '<div class="kurir-item"><span>' + data[i].name + '</span><span class="online">✅ Online</span></div>';
+      }
+      grid.innerHTML = html;
+    }
     document.getElementById('totalKurir').textContent = data.length;
   });
 
   db.collection('orders').get().then((snapshot) => {
     const data = [];
     snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
-    renderOrders(data);
+    const tbody = document.getElementById('orderBody');
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Belum ada pesanan</td></tr>';
+    } else {
+      let html = '';
+      for (let i = 0; i < data.length; i++) {
+        const o = data[i];
+        let status = o.status || 'Pending';
+        if (status === 'Delivered') status = '✅ Delivered';
+        else if (status === 'Processing') status = '⏳ Processing';
+        else if (status === 'Pending') status = '🕐 Pending';
+        html += '<tr><td>#' + (i+1) + '</td><td>' + (o.customer || '-') + '</td><td>' + (o.kecamatan || '-') + '</td><td>' + (o.jumlah || 0) + '</td><td>Rp' + (o.total || 0).toLocaleString() + '</td><td>' + status + '</td></tr>';
+      }
+      tbody.innerHTML = html;
+    }
     document.getElementById('totalOrders').textContent = data.length;
     const totalOmzet = data.reduce((sum, o) => sum + (o.total || 0), 0);
     document.getElementById('omzet').textContent = 'Rp' + (totalOmzet/1000).toFixed(0) + 'rb';
   });
 }
 
-// ===== RENDER KURIR =====
-function renderKurir(data) {
-  const grid = document.getElementById('kurirGrid');
-  if (data.length === 0) {
-    grid.innerHTML = '<div style="text-align:center;color:#999;padding:20px">Belum ada kurir</div>';
-    return;
-  }
-  let html = '';
-  for (let i = 0; i < data.length; i++) {
-    html += '<div class="kurir-item"><span>' + data[i].name + '</span><span class="online">✅ Online</span></div>';
-  }
-  grid.innerHTML = html;
-}
-
-// ===== RENDER ORDERS =====
-function renderOrders(data) {
-  const tbody = document.getElementById('orderBody');
-  if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Belum ada pesanan</td></tr>';
-    return;
-  }
-  let html = '';
-  for (let i = 0; i < data.length; i++) {
-    const o = data[i];
-    let status = o.status || 'Pending';
-    if (status === 'Delivered') status = '✅ Delivered';
-    else if (status === 'Processing') status = '⏳ Processing';
-    else if (status === 'Pending') status = '🕐 Pending';
-    html += '<tr><td>#' + (i+1) + '</td><td>' + (o.customer || '-') + '</td><td>' + (o.kecamatan || '-') + '</td><td>' + (o.jumlah || 0) + '</td><td>Rp' + (o.total || 0).toLocaleString() + '</td><td>' + status + '</td></tr>';
-  }
-  tbody.innerHTML = html;
-}
-
-// ===== RENDER SELECT =====
 function renderSelect(data) {
   const select = document.getElementById('pilihKurir');
   let html = '<option value="">Pilih Kurir</option>';
@@ -238,7 +222,6 @@ function renderSelect(data) {
   select.innerHTML = html;
 }
 
-// ===== GENERATE PAYROLL =====
 function generatePayroll() {
   const id = document.getElementById('pilihKurir').value;
   const box = document.getElementById('hasilPayroll');
@@ -257,7 +240,6 @@ function generatePayroll() {
   box.style.display = 'block';
 }
 
-// ===== GANTI TAB =====
 function gantiTab(tab) {
   const btns = document.querySelectorAll('.tab button');
   for (let i = 0; i < btns.length; i++) btns[i].classList.remove('active');
@@ -282,7 +264,6 @@ function gantiTab(tab) {
   }
 }
 
-// ===== CEK STATUS LOGIN =====
 auth.onAuthStateChanged((user) => {
   if (user) {
     document.getElementById('loginPage').style.display = 'none';
