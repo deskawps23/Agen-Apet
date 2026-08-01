@@ -3,11 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agen Apet - Firebase</title>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <title>Agen Apet</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:arial,sans-serif}
     body{background:#f0f4f8}
@@ -50,21 +46,19 @@
 </head>
 <body>
 <div id="toast" class="toast"></div>
-
 <div id="loginPage" class="login">
   <div class="box">
     <div class="logo">🚰</div>
     <h1>Agen-Apet-Pandeglang</h1>
     <p>Melayani masyarakat dan dapur MBG sekabupaten Pandeglang</p>
     <hr>
-    <input type="text" id="user" placeholder="Email" value="admin@apetone.com">
+    <input type="text" id="user" placeholder="Username" value="admin@apetone.com">
     <input type="password" id="pass" placeholder="Password" value="admin123">
     <button onclick="login()">Login</button>
     <div class="hint">Email: admin@apetone.com | Password: admin123</div>
     <div class="owner">Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
   </div>
 </div>
-
 <div id="dashPage" class="dash">
   <div class="header">
     <h2>🚰 Agen-Apet-Pandeglang</h2>
@@ -127,8 +121,12 @@
   <div class="footer">© 2026 Agen-Apet-Pandeglang | Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <script>
-// ===== FIREBASE CONFIG (GANTI DENGAN PUNYA KAMU) =====
+// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyA2L1XvGkuXAZ7od6QrcAzriRw-Ydprid4",
   authDomain: "agen-apeet-pandeglang.firebaseapp.com",
@@ -137,12 +135,12 @@ const firebaseConfig = {
   messagingSenderId: "531140473833",
   appId: "1:531140473833:web:49ce2afd98208619d89178"
 };
-// Initialize Firebase
+
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// ===== TOAST NOTIFICATION =====
+// ===== TOAST =====
 function showToast(msg, isError = false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -156,13 +154,12 @@ function showToast(msg, isError = false) {
 function login() {
   const email = document.getElementById('user').value;
   const password = document.getElementById('pass').value;
-  
+
   auth.signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
       document.getElementById('loginPage').style.display = 'none';
       document.getElementById('dashPage').classList.add('show');
       document.getElementById('userEmail').textContent = '👤 ' + userCredential.user.email;
-      loadData();
       showToast('✅ Login berhasil!');
     })
     .catch((error) => {
@@ -179,89 +176,79 @@ function logout() {
   });
 }
 
-// ===== LOAD DATA DARI FIRESTORE =====
+// ===== LOAD DATA =====
 function loadData() {
-  // Load kurir
   db.collection('kurir').get().then((snapshot) => {
-    const kurirData = [];
-    snapshot.forEach((doc) => {
-      kurirData.push({ id: doc.id, ...doc.data() });
-    });
-    renderKurir(kurirData);
-    renderSelect(kurirData);
-    document.getElementById('totalKurir').textContent = kurirData.length;
+    const data = [];
+    snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
+    renderKurir(data);
+    document.getElementById('totalKurir').textContent = data.length;
   });
 
-  // Load orders
   db.collection('orders').get().then((snapshot) => {
-    const ordersData = [];
-    snapshot.forEach((doc) => {
-      ordersData.push({ id: doc.id, ...doc.data() });
-    });
-    renderOrders(ordersData);
-    document.getElementById('totalOrders').textContent = ordersData.length;
-    const totalOmzet = ordersData.reduce((sum, o) => sum + (o.total || 0), 0);
+    const data = [];
+    snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
+    renderOrders(data);
+    document.getElementById('totalOrders').textContent = data.length;
+    const totalOmzet = data.reduce((sum, o) => sum + (o.total || 0), 0);
     document.getElementById('omzet').textContent = 'Rp' + (totalOmzet/1000).toFixed(0) + 'rb';
   });
 }
 
 // ===== RENDER KURIR =====
 function renderKurir(data) {
-  var html = '';
+  const grid = document.getElementById('kurirGrid');
   if (data.length === 0) {
-    html = '<div style="text-align:center;color:#999;padding:20px">Belum ada kurir. Tambahkan di Firebase.</div>';
-  } else {
-    for (var i = 0; i < data.length; i++) {
-      html += '<div class="kurir-item"><span>' + data[i].name + '</span><span class="online">✅ Online</span></div>';
-    }
+    grid.innerHTML = '<div style="text-align:center;color:#999;padding:20px">Belum ada kurir</div>';
+    return;
   }
-  document.getElementById('kurirGrid').innerHTML = html;
+  let html = '';
+  for (let i = 0; i < data.length; i++) {
+    html += '<div class="kurir-item"><span>' + data[i].name + '</span><span class="online">✅ Online</span></div>';
+  }
+  grid.innerHTML = html;
 }
 
 // ===== RENDER ORDERS =====
 function renderOrders(data) {
-  var html = '';
+  const tbody = document.getElementById('orderBody');
   if (data.length === 0) {
-    html = '<tr><td colspan="6" style="text-align:center;color:#999">Belum ada pesanan</td></tr>';
-  } else {
-    for (var i = 0; i < data.length; i++) {
-      var o = data[i];
-      var txt = o.status || 'Pending';
-      if (txt === 'Delivered') txt = '✅ Delivered';
-      else if (txt === 'Processing') txt = '⏳ Processing';
-      else if (txt === 'Pending') txt = '🕐 Pending';
-      html += '<tr><td>#' + (i+1) + '</td><td>' + (o.customer || '-') + '</td><td>' + (o.kecamatan || '-') + '</td><td>' + (o.jumlah || 0) + '</td><td>Rp' + (o.total || 0).toLocaleString() + '</td><td>' + txt + '</td></tr>';
-    }
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Belum ada pesanan</td></tr>';
+    return;
   }
-  document.getElementById('orderBody').innerHTML = html;
+  let html = '';
+  for (let i = 0; i < data.length; i++) {
+    const o = data[i];
+    let status = o.status || 'Pending';
+    if (status === 'Delivered') status = '✅ Delivered';
+    else if (status === 'Processing') status = '⏳ Processing';
+    else if (status === 'Pending') status = '🕐 Pending';
+    html += '<tr><td>#' + (i+1) + '</td><td>' + (o.customer || '-') + '</td><td>' + (o.kecamatan || '-') + '</td><td>' + (o.jumlah || 0) + '</td><td>Rp' + (o.total || 0).toLocaleString() + '</td><td>' + status + '</td></tr>';
+  }
+  tbody.innerHTML = html;
 }
 
-// ===== RENDER SELECT KURIR =====
+// ===== RENDER SELECT =====
 function renderSelect(data) {
-  var html = '<option value="">Pilih Kurir</option>';
-  for (var i = 0; i < data.length; i++) {
+  const select = document.getElementById('pilihKurir');
+  let html = '<option value="">Pilih Kurir</option>';
+  for (let i = 0; i < data.length; i++) {
     html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
   }
-  document.getElementById('pilihKurir').innerHTML = html;
+  select.innerHTML = html;
 }
 
 // ===== GENERATE PAYROLL =====
 function generatePayroll() {
-  var id = document.getElementById('pilihKurir').value;
-  var box = document.getElementById('hasilPayroll');
-  if (!id) {
-    box.style.display = 'none';
-    return;
-  }
-  // Cari nama kurir dari dropdown
-  var select = document.getElementById('pilihKurir');
-  var nama = select.options[select.selectedIndex].text;
-  
-  var gaji = 2500000;
-  var insentif = 1350000;
-  var bonus = 540000;
-  var total = gaji + insentif + bonus;
-  
+  const id = document.getElementById('pilihKurir').value;
+  const box = document.getElementById('hasilPayroll');
+  if (!id) { box.style.display = 'none'; return; }
+  const select = document.getElementById('pilihKurir');
+  const nama = select.options[select.selectedIndex].text;
+  const gaji = 2500000;
+  const insentif = 1350000;
+  const bonus = 540000;
+  const total = gaji + insentif + bonus;
   document.getElementById('namaKurir').textContent = '🧾 ' + nama;
   document.getElementById('gajiPokok').textContent = 'Rp ' + gaji.toLocaleString();
   document.getElementById('insentif').textContent = 'Rp ' + insentif.toLocaleString();
@@ -272,10 +259,10 @@ function generatePayroll() {
 
 // ===== GANTI TAB =====
 function gantiTab(tab) {
-  var btns = document.querySelectorAll('.tab button');
-  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
-  var sections = document.querySelectorAll('.section');
-  for (var i = 0; i < sections.length; i++) sections[i].classList.remove('show');
+  const btns = document.querySelectorAll('.tab button');
+  for (let i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  const sections = document.querySelectorAll('.section');
+  for (let i = 0; i < sections.length; i++) sections[i].classList.remove('show');
   if (tab === 'dashboard') {
     btns[0].classList.add('active');
     document.getElementById('tab-dashboard').classList.add('show');
@@ -283,6 +270,11 @@ function gantiTab(tab) {
   } else if (tab === 'payroll') {
     btns[1].classList.add('active');
     document.getElementById('tab-payroll').classList.add('show');
+    db.collection('kurir').get().then((snapshot) => {
+      const data = [];
+      snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
+      renderSelect(data);
+    });
   } else if (tab === 'orders') {
     btns[2].classList.add('active');
     document.getElementById('tab-orders').classList.add('show');
@@ -304,4 +296,4 @@ auth.onAuthStateChanged((user) => {
 });
 </script>
 </body>
-                                                                              </html>
+</html>
