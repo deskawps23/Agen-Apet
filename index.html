@@ -1,280 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agen Apet</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:arial,sans-serif}
-    body{background:#f0f4f8}
-    .login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a365d,#2b6cb0);padding:20px}
-    .box{background:white;padding:30px;border-radius:20px;max-width:400px;width:100%;text-align:center}
-    .logo{font-size:60px}
-    h1{font-size:24px;color:#1a365d;margin:10px 0}
-    p{color:#718096;font-size:14px}
-    hr{margin:20px 0;border:1px solid #ddd}
-    input{width:100%;padding:14px;border:2px solid #ddd;border-radius:12px;font-size:16px;margin:8px 0}
-    button{width:100%;padding:14px;background:#2b6cb0;color:white;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer}
-    button:active{transform:scale(0.97)}
-    .hint{font-size:12px;color:#999;margin-top:12px}
-    .owner{font-size:11px;color:#777;margin-top:10px;border-top:1px solid #eee;padding-top:10px}
-    .dash{display:none;padding:16px}
-    .dash.show{display:block}
-    .header{background:linear-gradient(135deg,#1a365d,#2b6cb0);color:white;padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-   .header h2{font-size:18px}
-    .logout{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:6px 16px;border-radius:8px;font-size:13px;cursor:pointer}
-    .tab{display:flex;background:white;border-bottom:2px solid #ddd;overflow-x:auto}
-    .tab button{padding:12px 20px;border:none;background:transparent;font-weight:bold;color:#777;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
-    .tab button.active{color:#2b6cb0;border-bottom-color:#2b6cb0}
-    .content{max-width:800px;margin:auto;padding:16px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-    .grid>div{background:white;padding:16px;border-radius:12px;text-align:center}
-    .grid .angka{font-size:28px;font-weight:bold;color:#2b6cb0}
-    .grid .label{font-size:12px;color:#777}
-    .card{background:white;padding:16px;border-radius:12px;margin-bottom:16px}
-    .card h3{font-size:16px;color:#1a365d}
-    .card .sub{font-size:13px;color:#777;margin-bottom:12px}
-    .kurir-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .kurir-item{background:#f7fafc;padding:8px 12px;border-radius:8px;display:flex;justify-content:space-between;font-size:13px}
-    .kurir-item .online{color:#48bb78;font-weight:bold}
-    .section{display:none}
-    .section.show{display:block}
-    .footer{background:#1a365d;color:white;padding:12px;text-align:center;font-size:12px;position:fixed;bottom:0;width:100%}
-    .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#48bb78;color:white;padding:12px 24px;border-radius:12px;z-index:999;display:none;max-width:90%;text-align:center}
-    .toast.error{background:#f56565}
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agen Apeet Pandeglang</title>
 </head>
 <body>
-<div id="toast" class="toast"></div>
-<div id="loginPage" class="login">
-  <div class="box">
-    <div class="logo">🚰</div>
-    <h1>Agen-Apet-Pandeglang</h1>
-    <p>Melayani masyarakat dan dapur MBG sekabupaten Pandeglang</p>
-    <hr>
-    <input type="text" id="user" placeholder="Email" value="admin@apetone.com">
-    <input type="password" id="pass" placeholder="Password" value="admin123">
-    <button onclick="login()">Login</button>
-    <div class="hint">Email: admin@apetone.com | Password: admin123</div>
-    <div class="owner">Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
-  </div>
-</div>
-<div id="dashPage" class="dash">
-  <div class="header">
-    <h2>🚰 Agen-Apet-Pandeglang</h2>
-    <div>
-      <span style="font-size:13px;margin-right:10px" id="userEmail">👤 Deska</span>
-      <button class="logout" onclick="logout()">Logout</button>
-    </div>
-  </div>
-  <div class="tab">
-    <button class="active" onclick="gantiTab('dashboard')">📊 Dashboard</button>
-    <button onclick="gantiTab('payroll')">💰 Payroll</button>
-    <button onclick="gantiTab('orders')">📋 Pesanan</button>
-  </div>
-  <div class="content">
-    <div id="tab-dashboard" class="section show">
-      <div class="grid">
-        <div><div class="label">📦 Total Pesanan</div><div class="angka" id="totalOrders">0</div><div style="font-size:11px;color:#999">Hari ini</div></div>
-        <div><div class="label">🚚 Kurir Aktif</div><div class="angka" id="totalKurir">0</div><div style="font-size:11px;color:#999">Semua aktif</div></div>
-        <div><div class="label">💰 Omzet</div><div class="angka" id="omzet">Rp0</div><div style="font-size:11px;color:#999">Hari ini</div></div>
-        <div><div class="label">🏷️ Kecamatan</div><div class="angka">35</div><div style="font-size:11px;color:#999">Pandeglang</div></div>
-      </div>
-      <div class="card">
-        <h3>🚚 Status 10 Kurir</h3>
-        <div class="sub">Semua aktif melayani 35 kecamatan</div>
-        <div class="kurir-grid" id="kurirGrid"></div>
-      </div>
-    </div>
-    <div id="tab-payroll" class="section">
-      <div class="card">
-        <h3>💰 Generate Payroll</h3>
-        <div class="sub">Bulan: Juli 2026</div>
-        <select id="pilihKurir" onchange="generatePayroll()">
-          <option value="">Pilih Kurir</option>
-        </select>
-        <div id="hasilPayroll" style="margin-top:16px;padding:16px;background:#f7fafc;border-radius:10px;display:none">
-          <div id="namaKurir" style="font-weight:bold;font-size:17px">-</div>
-          <div id="periode" style="color:#777;font-size:13px">Periode: 07-2026</div>
-          <table style="width:100%">
-            <tr><td>Gaji Pokok</td><td align="right" id="gajiPokok">Rp 0</td></tr>
-            <tr><td>Insentif Galon</td><td align="right" id="insentif">Rp 0</td></tr>
-            <tr><td>Bonus Jarak</td><td align="right" id="bonus">Rp 0</td></tr>
-            <tr style="border-top:2px solid #2b6cb0;font-size:17px"><td><b>TOTAL</b></td><td align="right" id="totalGaji"><b>Rp 0</b></td></tr>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div id="tab-orders" class="section">
-      <div class="card">
-        <h3>📋 Daftar Pesanan</h3>
-        <div class="sub">Update dari 35 kecamatan</div>
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead>
-            <tr><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">ID</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Pelanggan</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Kecamatan</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Jumlah</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Total</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Status</th></tr>
-          </thead>
-          <tbody id="orderBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <div class="footer">© 2026 Agen-Apet-Pandeglang | Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
-</div>
+  <h1>🚀 Firebase Web App Connected</h1>
+  <p>Project: agen-apeet-pandeglang</p>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import Firebase App
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getStorage, ref, uploadString, getDownloadURL } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-<script>
-// ===== FIREBASE CONFIG =====
-const firebaseConfig = {
-  apiKey: "GANTI_DENGAN_API_KEY_KAMU",
-  authDomain: "agen-apeet-pandeglang.firebaseapp.com",
-  projectId: "agen-apeet-pandeglang",
-  storageBucket: "agen-apeet-pandeglang.firebasestorage.app",
-  messagingSenderId: "GANTI_DENGAN_MESSAGING_SENDER_ID_KAMU",
-  appId: "GANTI_DENGAN_APP_ID_KAMU"
-};
+    // Konfigurasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA2L1XVgXuoXA27o6QrcAzriRV-Ydprid4",
+      authDomain: "agen-apeet-pandeglang.firebaseapp.com",
+      projectId: "agen-apeet-pandeglang",
+      storageBucket: "agen-apeet-pandeglang.firebasestorage.app",
+      messagingSenderId: "531140473833",
+      appId: "1:531140473833:web:49ce2afd98208619d89178"
+    };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+    // Inisialisasi Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
-function showToast(msg, isError = false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (isError ? ' error' : '');
-  t.style.display = 'block';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.display = 'none'; }, 3000);
-}
+    console.log("Firebase initialized:", app);
 
-function login() {
-  const email = document.getElementById('user').value;
-  const password = document.getElementById('pass').value;
-  auth.signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      document.getElementById('loginPage').style.display = 'none';
-      document.getElementById('dashPage').classList.add('show');
-      document.getElementById('userEmail').textContent = '👤 ' + userCredential.user.email;
-      showToast('✅ Login berhasil!');
-    })
-    .catch((error) => {
-      showToast('❌ ' + error.message, true);
-    });
-}
-
-function logout() {
-  auth.signOut().then(() => {
-    document.getElementById('loginPage').style.display = 'flex';
-    document.getElementById('dashPage').classList.remove('show');
-    showToast('👋 Logout berhasil!');
-  });
-}
-
-function loadData() {
-  db.collection('kurir').get().then((snapshot) => {
-    const data = [];
-    snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
-    const grid = document.getElementById('kurirGrid');
-    if (data.length === 0) {
-      grid.innerHTML = '<div style="text-align:center;color:#999;padding:20px">Belum ada kurir</div>';
-    } else {
-      let html = '';
-      for (let i = 0; i < data.length; i++) {
-        html += '<div class="kurir-item"><span>' + data[i].name + '</span><span class="online">✅ Online</span></div>';
+    // 🔐 Contoh Auth: Register & Login
+    async function registerUser(email, password) {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log("User registered:", userCredential.user);
+      } catch (error) {
+        console.error("Error registering:", error);
       }
-      grid.innerHTML = html;
     }
-    document.getElementById('totalKurir').textContent = data.length;
-  });
 
-  db.collection('orders').get().then((snapshot) => {
-    const data = [];
-    snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
-    const tbody = document.getElementById('orderBody');
-    if (data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Belum ada pesanan</td></tr>';
-    } else {
-      let html = '';
-      for (let i = 0; i < data.length; i++) {
-        const o = data[i];
-        let status = o.status || 'Pending';
-        if (status === 'Delivered') status = '✅ Delivered';
-        else if (status === 'Processing') status = '⏳ Processing';
-        else if (status === 'Pending') status = '🕐 Pending';
-        html += '<tr><td>#' + (i+1) + '</td><td>' + (o.customer || '-') + '</td><td>' + (o.kecamatan || '-') + '</td><td>' + (o.jumlah || 0) + '</td><td>Rp' + (o.total || 0).toLocaleString() + '</td><td>' + status + '</td></tr>';
+    async function loginUser(email, password) {
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log("User logged in:", userCredential.user);
+      } catch (error) {
+        console.error("Error logging in:", error);
       }
-      tbody.innerHTML = html;
     }
-    document.getElementById('totalOrders').textContent = data.length;
-    const totalOmzet = data.reduce((sum, o) => sum + (o.total || 0), 0);
-    document.getElementById('omzet').textContent = 'Rp' + (totalOmzet/1000).toFixed(0) + 'rb';
-  });
-}
 
-function renderSelect(data) {
-  const select = document.getElementById('pilihKurir');
-  let html = '<option value="">Pilih Kurir</option>';
-  for (let i = 0; i < data.length; i++) {
-    html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
-  }
-  select.innerHTML = html;
-}
+    // 📦 Contoh Firestore: Simpan & Ambil Data
+    async function saveData(uid, data) {
+      await setDoc(doc(db, "users", uid), data);
+      console.log("Data saved for:", uid);
+    }
 
-function generatePayroll() {
-  const id = document.getElementById('pilihKurir').value;
-  const box = document.getElementById('hasilPayroll');
-  if (!id) { box.style.display = 'none'; return; }
-  const select = document.getElementById('pilihKurir');
-  const nama = select.options[select.selectedIndex].text;
-  const gaji = 2500000;
-  const insentif = 1350000;
-  const bonus = 540000;
-  const total = gaji + insentif + bonus;
-  document.getElementById('namaKurir').textContent = '🧾 ' + nama;
-  document.getElementById('gajiPokok').textContent = 'Rp ' + gaji.toLocaleString();
-  document.getElementById('insentif').textContent = 'Rp ' + insentif.toLocaleString();
-  document.getElementById('bonus').textContent = 'Rp ' + bonus.toLocaleString();
-  document.getElementById('totalGaji').innerHTML = '<b>Rp ' + total.toLocaleString() + '</b>';
-  box.style.display = 'block';
-}
+    async function getData(uid) {
+      const docSnap = await getDoc(doc(db, "users", uid));
+      if (docSnap.exists()) {
+        console.log("Data:", docSnap.data());
+      } else {
+        console.log("No data found");
+      }
+    }
 
-function gantiTab(tab) {
-  const btns = document.querySelectorAll('.tab button');
-  for (let i = 0; i < btns.length; i++) btns[i].classList.remove('active');
-  const sections = document.querySelectorAll('.section');
-  for (let i = 0; i < sections.length; i++) sections[i].classList.remove('show');
-  if (tab === 'dashboard') {
-    btns[0].classList.add('active');
-    document.getElementById('tab-dashboard').classList.add('show');
-    loadData();
-  } else if (tab === 'payroll') {
-    btns[1].classList.add('active');
-    document.getElementById('tab-payroll').classList.add('show');
-    db.collection('kurir').get().then((snapshot) => {
-      const data = [];
-      snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
-      renderSelect(data);
-    });
-  } else if (tab === 'orders') {
-    btns[2].classList.add('active');
-    document.getElementById('tab-orders').classList.add('show');
-    loadData();
-  }
-}
+    // 🗂️ Contoh Storage: Upload & Ambil File
+    async function uploadFile(uid, content) {
+      const storageRef = ref(storage, `files/${uid}.txt`);
+      await uploadString(storageRef, content);
+      const url = await getDownloadURL(storageRef);
+      console.log("File uploaded, URL:", url);
+    }
 
-auth.onAuthStateChanged((user) => {
-  if (user) {
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('dashPage').classList.add('show');
-    document.getElementById('userEmail').textContent = '👤 ' + user.email;
-    loadData();
-  } else {
-    document.getElementById('loginPage').style.display = 'flex';
-    document.getElementById('dashPage').classList.remove('show');
-  }
-});
-</script>
+    // 🚀 Uji coba cepat
+    registerUser("test@example.com", "password123");
+    loginUser("test@example.com", "password123");
+    saveData("testUID", { name: "Deska", role: "Admin" });
+    getData("testUID");
+    uploadFile("testUID", "Hello Firebase Storage!");
+  </script>
 </body>
 </html>
