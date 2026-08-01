@@ -1,659 +1,308 @@
-<!-- =========================
-FILE: index.html
-========================= -->
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agen APET — Admin Firebase</title>
-  <meta name="description" content="Sistem admin Agen APET dengan Firebase Authentication, Firestore, Storage, GPS, role super admin dan admin stokis." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agen Apet - Firebase</title>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:arial,sans-serif}
+    body{background:#f0f4f8}
+    .login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a365d,#2b6cb0);padding:20px}
+    .box{background:white;padding:30px;border-radius:20px;max-width:400px;width:100%;text-align:center}
+    .logo{font-size:60px}
+    h1{font-size:24px;color:#1a365d;margin:10px 0}
+    p{color:#718096;font-size:14px}
+    hr{margin:20px 0;border:1px solid #ddd}
+    input{width:100%;padding:14px;border:2px solid #ddd;border-radius:12px;font-size:16px;margin:8px 0}
+    button{width:100%;padding:14px;background:#2b6cb0;color:white;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer}
+    button:active{transform:scale(0.97)}
+    .hint{font-size:12px;color:#999;margin-top:12px}
+    .owner{font-size:11px;color:#777;margin-top:10px;border-top:1px solid #eee;padding-top:10px}
+    .dash{display:none;padding:16px}
+    .dash.show{display:block}
+    .header{background:linear-gradient(135deg,#1a365d,#2b6cb0);color:white;padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .header h2{font-size:18px}
+    .logout{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:6px 16px;border-radius:8px;font-size:13px;cursor:pointer}
+    .tab{display:flex;background:white;border-bottom:2px solid #ddd;overflow-x:auto}
+    .tab button{padding:12px 20px;border:none;background:transparent;font-weight:bold;color:#777;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+    .tab button.active{color:#2b6cb0;border-bottom-color:#2b6cb0}
+    .content{max-width:800px;margin:auto;padding:16px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+    .grid>div{background:white;padding:16px;border-radius:12px;text-align:center}
+    .grid .angka{font-size:28px;font-weight:bold;color:#2b6cb0}
+    .grid .label{font-size:12px;color:#777}
+    .card{background:white;padding:16px;border-radius:12px;margin-bottom:16px}
+    .card h3{font-size:16px;color:#1a365d}
+    .card .sub{font-size:13px;color:#777;margin-bottom:12px}
+    .kurir-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .kurir-item{background:#f7fafc;padding:8px 12px;border-radius:8px;display:flex;justify-content:space-between;font-size:13px}
+    .kurir-item .online{color:#48bb78;font-weight:bold}
+    .section{display:none}
+    .section.show{display:block}
+    .footer{background:#1a365d;color:white;padding:12px;text-align:center;font-size:12px;position:fixed;bottom:0;width:100%}
+    .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#48bb78;color:white;padding:12px 24px;border-radius:12px;z-index:999;display:none;max-width:90%;text-align:center}
+    .toast.error{background:#f56565}
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="wrap topbar-inner">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true"></div>
-        <div>
-          <h1>Agen APET Admin Firebase</h1>
-          <small>Super Admin & Admin Stokis</small>
-        </div>
-      </div>
+<div id="toast" class="toast"></div>
 
-      <nav class="desktop-nav" aria-label="Navigasi desktop">
-        <a href="#dashboard" class="active">Dashboard</a>
-        <a href="#auth">Login</a>
-        <a href="#modules">Modul</a>
-        <a href="#dataset">Data</a>
-      </nav>
+<div id="loginPage" class="login">
+  <div class="box">
+    <div class="logo">🚰</div>
+    <h1>Agen-Apet-Pandeglang</h1>
+    <p>Melayani masyarakat dan dapur MBG sekabupaten Pandeglang</p>
+    <hr>
+    <input type="text" id="user" placeholder="Email" value="admin@apetone.com">
+    <input type="password" id="pass" placeholder="Password" value="admin123">
+    <button onclick="login()">Login</button>
+    <div class="hint">Email: admin@apetone.com | Password: admin123</div>
+    <div class="owner">Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
+  </div>
+</div>
+
+<div id="dashPage" class="dash">
+  <div class="header">
+    <h2>🚰 Agen-Apet-Pandeglang</h2>
+    <div>
+      <span style="font-size:13px;margin-right:10px" id="userEmail">👤 Deska</span>
+      <button class="logout" onclick="logout()">Logout</button>
     </div>
-  </header>
-
-  <div class="toast-wrap" id="toastWrap"></div>
-
-  <main>
-    <section class="hero" id="dashboard">
-      <div class="wrap hero-grid">
-        <article class="glass hero-main">
-          <div>
-            <span class="eyebrow st1">GitHub Pages Live Ready</span>
-            <h2 class="hero-title st2">Sistem admin operasional untuk agen dan stokis.</h2>
-            <p class="hero-text st3">
-              Project ini disiapkan untuk berjalan di GitHub Pages Anda
-              <strong>https://deskawps23.github.io/Agen-Apet/</strong>
-              dengan backend Firebase untuk login, role, CRUD data, upload foto, dan GPS.
-            </p>
-          </div>
-
-          <div class="hero-metrics st4">
-            <div class="metric">
-              <strong>Firebase</strong>
-              <span>Auth, Firestore, Storage</span>
-            </div>
-            <div class="metric">
-              <strong>2 Role</strong>
-              <span>super_admin & admin_stokis</span>
-            </div>
-            <div class="metric">
-              <strong>Mobile Ready</strong>
-              <span>Card layout di HP</span>
-            </div>
-          </div>
-        </article>
-
-        <aside class="glass hero-side">
-          <div class="mini">
-            <h3>Site Anda sudah live</h3>
-            <p>GitHub Pages repo <strong>Agen-Apet</strong> sudah aktif dari branch <strong>main</strong> dan folder <strong>/root</strong>.</p>
-          </div>
-          <div class="mini">
-            <h3>HTTPS aktif</h3>
-            <p>Karena GitHub Pages sudah pakai HTTPS, browser mobile dapat meminta izin lokasi untuk fitur GPS.</p>
-          </div>
-          <div class="mini">
-            <h3>Langsung dipakai</h3>
-            <p>Setelah Anda isi config Firebase, sistem ini bisa langsung diuji untuk login, tambah data, edit, hapus, dan upload foto.</p>
-          </div>
-        </aside>
+  </div>
+  <div class="tab">
+    <button class="active" onclick="gantiTab('dashboard')">📊 Dashboard</button>
+    <button onclick="gantiTab('payroll')">💰 Payroll</button>
+    <button onclick="gantiTab('orders')">📋 Pesanan</button>
+  </div>
+  <div class="content">
+    <div id="tab-dashboard" class="section show">
+      <div class="grid">
+        <div><div class="label">📦 Total Pesanan</div><div class="angka" id="totalOrders">0</div><div style="font-size:11px;color:#999">Hari ini</div></div>
+        <div><div class="label">🚚 Kurir Aktif</div><div class="angka" id="totalKurir">0</div><div style="font-size:11px;color:#999">Semua aktif</div></div>
+        <div><div class="label">💰 Omzet</div><div class="angka" id="omzet">Rp0</div><div style="font-size:11px;color:#999">Hari ini</div></div>
+        <div><div class="label">🏷️ Kecamatan</div><div class="angka">35</div><div style="font-size:11px;color:#999">Pandeglang</div></div>
       </div>
-    </section>
-
-    <section class="section" id="auth">
-      <div class="wrap">
-        <div class="section-head reveal">
-          <div>
-            <h2 class="section-title">Login Firebase</h2>
-            <p>Gunakan login email dan password. Role user dibaca dari collection <strong>users</strong>.</p>
-          </div>
-          <span class="badge">Authentication</span>
-        </div>
-
-        <div class="glass login-card reveal" id="loginSection">
-          <div class="grid-2">
-            <div class="field">
-              <label>Email</label>
-              <input id="loginEmail" class="input" type="email" placeholder="email@domain.com">
-            </div>
-            <div class="field">
-              <label>Password</label>
-              <input id="loginPassword" class="input" type="password" placeholder="Password">
-            </div>
-          </div>
-          <div class="actions" style="margin-top:14px">
-            <button class="btn btn-primary" id="loginBtn">Login</button>
-            <button class="btn btn-secondary" id="fillDemoBtn" type="button">Isi Contoh</button>
-          </div>
-          <p class="hint" style="margin-top:12px">
-            User login dibuat di Firebase Authentication, lalu profil role disimpan di Firestore collection <strong>users</strong>.
-          </p>
-        </div>
-
-        <div class="glass login-card hidden reveal" id="sessionSection">
-          <div class="section-head" style="margin-bottom:10px">
-            <div>
-              <h2 class="section-title" id="sessionTitle">Sesi aktif</h2>
-              <p id="sessionDesc">Anda sudah login.</p>
-            </div>
-            <span class="badge" id="sessionBadge">Logged In</span>
-          </div>
-          <div class="actions">
-            <button class="btn btn-secondary" id="refreshDataBtn">Muat Ulang Data</button>
-            <button class="btn btn-danger" id="logoutBtn">Logout</button>
-          </div>
+      <div class="card">
+        <h3>🚚 Status 10 Kurir</h3>
+        <div class="sub">Semua aktif melayani 35 kecamatan</div>
+        <div class="kurir-grid" id="kurirGrid"></div>
+      </div>
+    </div>
+    <div id="tab-payroll" class="section">
+      <div class="card">
+        <h3>💰 Generate Payroll</h3>
+        <div class="sub">Bulan: Juli 2026</div>
+        <select id="pilihKurir" onchange="generatePayroll()">
+          <option value="">Pilih Kurir</option>
+        </select>
+        <div id="hasilPayroll" style="margin-top:16px;padding:16px;background:#f7fafc;border-radius:10px;display:none">
+          <div id="namaKurir" style="font-weight:bold;font-size:17px">-</div>
+          <div id="periode" style="color:#777;font-size:13px">Periode: 07-2026</div>
+          <table style="width:100%">
+            <tr><td>Gaji Pokok</td><td align="right" id="gajiPokok">Rp 0</td></tr>
+            <tr><td>Insentif Galon</td><td align="right" id="insentif">Rp 0</td></tr>
+            <tr><td>Bonus Jarak</td><td align="right" id="bonus">Rp 0</td></tr>
+            <tr style="border-top:2px solid #2b6cb0;font-size:17px"><td><b>TOTAL</b></td><td align="right" id="totalGaji"><b>Rp 0</b></td></tr>
+          </table>
         </div>
       </div>
-    </section>
-
-    <section class="section hidden" id="appSection">
-      <div class="wrap">
-        <div class="section-head reveal">
-          <div>
-            <h2 class="section-title">Panel admin operasional</h2>
-            <p>
-              Super admin dapat mengelola semua data.
-              Admin stokis hanya mengelola data stokis dan kurir sesuai <strong>stokisId</strong>-nya.
-            </p>
-          </div>
-          <span class="badge">Role Based Access</span>
-        </div>
-
-        <div class="app-shell">
-          <aside class="glass sidebar reveal">
-            <div class="profile-card">
-              <strong id="currentRoleTitle">Role: -</strong>
-              <small id="currentRoleDesc">Belum ada sesi aktif.</small>
-            </div>
-
-            <div class="side-menu">
-              <button class="role-switch active" data-view="super">Panel Super Admin</button>
-              <button class="role-switch" data-view="stokis">Panel Admin Stokis</button>
-            </div>
-
-            <div class="mini">
-              <h3>Status koneksi</h3>
-              <p id="connectionInfo">Menunggu autentikasi Firebase.</p>
-            </div>
-          </aside>
-
-          <div class="content">
-            <section class="glass panel-pad reveal">
-              <div class="section-head" style="margin-bottom:14px">
-                <div>
-                  <h2 class="section-title">Ringkasan data</h2>
-                  <p>Statistik ini diambil dari Firestore sesuai role yang login.</p>
-                </div>
-                <span class="badge">Live Count</span>
-              </div>
-
-              <div class="stats-grid">
-                <div class="stat-card">
-                  <strong id="countUsers">0</strong>
-                  <span>Total users</span>
-                </div>
-                <div class="stat-card">
-                  <strong id="countStokis">0</strong>
-                  <span>Total stokis</span>
-                </div>
-                <div class="stat-card">
-                  <strong id="countKurir">0</strong>
-                  <span>Total kurir</span>
-                </div>
-                <div class="stat-card">
-                  <strong id="countWilayah">0</strong>
-                  <span>Total wilayah</span>
-                </div>
-              </div>
-            </section>
-
-            <section id="superView" class="glass panel-pad reveal">
-              <div class="section-head" style="margin-bottom:12px">
-                <div>
-                  <h2 class="section-title">Panel Super Admin</h2>
-                  <p>Kelola semua data user, stokis, kurir, wilayah, dan distribusi.</p>
-                </div>
-                <span class="badge">Full Access</span>
-              </div>
-
-              <div class="tabs">
-                <button class="tab-btn active" data-panel="usersPanel">Users</button>
-                <button class="tab-btn" data-panel="stokisPanel">Stokis</button>
-                <button class="tab-btn" data-panel="kurirPanel">Kurir</button>
-                <button class="tab-btn" data-panel="wilayahPanel">Wilayah</button>
-                <button class="tab-btn" data-panel="distribusiPanel">Distribusi</button>
-              </div>
-
-              <div id="usersPanel" class="form-panel active">
-                <div class="grid-3">
-                  <div class="field">
-                    <label>Nama User</label>
-                    <input id="userNama" class="input" type="text" placeholder="Nama admin / petugas">
-                  </div>
-                  <div class="field">
-                    <label>Email</label>
-                    <input id="userEmail" class="input" type="email" placeholder="email@domain.com">
-                  </div>
-                  <div class="field">
-                    <label>Password Awal</label>
-                    <input id="userPassword" class="input" type="password" placeholder="Minimal 6 karakter">
-                  </div>
-                  <div class="field">
-                    <label>Role</label>
-                    <select id="userRole" class="select">
-                      <option value="super_admin">super_admin</option>
-                      <option value="admin_stokis">admin_stokis</option>
-                      <option value="kurir">kurir</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Stokis ID</label>
-                    <input id="userStokisId" class="input" type="text" placeholder="Opsional">
-                  </div>
-                  <div class="field">
-                    <label>Status</label>
-                    <select id="userAktif" class="select">
-                      <option value="true">Aktif</option>
-                      <option value="false">Nonaktif</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="actions" style="margin-top:14px">
-                  <button class="btn btn-primary" id="saveUserBtn">Simpan User</button>
-                  <button class="btn btn-secondary" type="button" data-reset-panel="usersPanel">Reset</button>
-                </div>
-              </div>
-
-              <div id="stokisPanel" class="form-panel">
-                <div class="grid-3">
-                  <div class="field">
-                    <label>Kode Stokis</label>
-                    <input id="stokisKode" class="input" type="text" placeholder="STK-001">
-                  </div>
-                  <div class="field">
-                    <label>Nama Stokis</label>
-                    <input id="stokisNama" class="input" type="text" placeholder="Stokis Labuan 01">
-                  </div>
-                  <div class="field">
-                    <label>Penanggung Jawab</label>
-                    <input id="stokisPj" class="input" type="text" placeholder="Nama PJ">
-                  </div>
-                  <div class="field">
-                    <label>No HP</label>
-                    <input id="stokisHp" class="input" type="text" placeholder="08xxxxxxxxxx">
-                  </div>
-                  <div class="field">
-                    <label>Kecamatan ID</label>
-                    <input id="stokisKecamatanId" class="input" type="text" placeholder="labuan">
-                  </div>
-                  <div class="field">
-                    <label>Kecamatan Nama</label>
-                    <input id="stokisKecamatanNama" class="input" type="text" placeholder="Labuan">
-                  </div>
-                  <div class="field">
-                    <label>Desa ID</label>
-                    <input id="stokisDesaId" class="input" type="text" placeholder="labuan-kel">
-                  </div>
-                  <div class="field">
-                    <label>Desa Nama</label>
-                    <input id="stokisDesaNama" class="input" type="text" placeholder="Labuan">
-                  </div>
-                  <div class="field">
-                    <label>Total Stok</label>
-                    <input id="stokisTotalStok" class="input" type="number" placeholder="320">
-                  </div>
-                  <div class="field full">
-                    <label>Alamat</label>
-                    <textarea id="stokisAlamat" class="textarea" placeholder="Alamat lengkap stokis"></textarea>
-                  </div>
-                  <div class="field">
-                    <label>Status</label>
-                    <select id="stokisStatus" class="select">
-                      <option value="Aktif">Aktif</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Nonaktif">Nonaktif</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Latitude</label>
-                    <input id="stokisLat" class="input" type="text" placeholder="-6.123456">
-                  </div>
-                  <div class="field">
-                    <label>Longitude</label>
-                    <input id="stokisLng" class="input" type="text" placeholder="105.678901">
-                  </div>
-                  <div class="field">
-                    <label>Foto Stokis</label>
-                    <input id="stokisFoto" class="input" type="file" accept="image/*">
-                  </div>
-                </div>
-                <div class="actions" style="margin-top:14px">
-                  <button class="btn btn-secondary" type="button" data-gps="stokis">Ambil GPS</button>
-                  <button class="btn btn-primary" id="saveStokisBtn">Simpan Stokis</button>
-                </div>
-              </div>
-
-              <div id="kurirPanel" class="form-panel">
-                <div class="grid-3">
-                  <div class="field">
-                    <label>Kode Kurir</label>
-                    <input id="kurirKode" class="input" type="text" placeholder="KR-001">
-                  </div>
-                  <div class="field">
-                    <label>Nama Kurir</label>
-                    <input id="kurirNama" class="input" type="text" placeholder="Nama kurir">
-                  </div>
-                  <div class="field">
-                    <label>Stokis ID</label>
-                    <input id="kurirStokisId" class="input" type="text" placeholder="stks-labuan-01">
-                  </div>
-                  <div class="field">
-                    <label>No HP</label>
-                    <input id="kurirHp" class="input" type="text" placeholder="08xxxxxxxxxx">
-                  </div>
-                  <div class="field">
-                    <label>Kendaraan</label>
-                    <select id="kurirKendaraan" class="select">
-                      <option value="Motor">Motor</option>
-                      <option value="Mobil">Mobil</option>
-                      <option value="Pickup">Pickup</option>
-                      <option value="Becak">Becak</option>
-                      <option value="Lainnya">Lainnya</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Status</label>
-                    <select id="kurirStatus" class="select">
-                      <option value="Aktif">Aktif</option>
-                      <option value="Nonaktif">Nonaktif</option>
-                      <option value="Cuti">Cuti</option>
-                      <option value="Pending">Pending</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Area Layanan</label>
-                    <input id="kurirArea" class="input" type="text" placeholder="Warga / Dapur MBG">
-                  </div>
-                  <div class="field">
-                    <label>Latitude</label>
-                    <input id="kurirLat" class="input" type="text" placeholder="-6.123456">
-                  </div>
-                  <div class="field">
-                    <label>Longitude</label>
-                    <input id="kurirLng" class="input" type="text" placeholder="105.678901">
-                  </div>
-                  <div class="field">
-                    <label>Foto Kurir</label>
-                    <input id="kurirFoto" class="input" type="file" accept="image/*">
-                  </div>
-                </div>
-                <div class="actions" style="margin-top:14px">
-                  <button class="btn btn-secondary" type="button" data-gps="kurir">Ambil GPS</button>
-                  <button class="btn btn-primary" id="saveKurirBtn">Simpan Kurir</button>
-                </div>
-              </div>
-
-              <div id="wilayahPanel" class="form-panel">
-                <div class="grid-3">
-                  <div class="field">
-                    <label>Kode Wilayah</label>
-                    <input id="wilayahKode" class="input" type="text" placeholder="KCM-001">
-                  </div>
-                  <div class="field">
-                    <label>Nama Wilayah</label>
-                    <input id="wilayahNama" class="input" type="text" placeholder="Labuan">
-                  </div>
-                  <div class="field">
-                    <label>Jenis</label>
-                    <select id="wilayahJenis" class="select">
-                      <option value="Kecamatan">Kecamatan</option>
-                      <option value="Desa">Desa</option>
-                      <option value="Kelurahan">Kelurahan</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Parent ID</label>
-                    <input id="wilayahParentId" class="input" type="text" placeholder="pandeglang / labuan">
-                  </div>
-                  <div class="field">
-                    <label>Parent Nama</label>
-                    <input id="wilayahParentNama" class="input" type="text" placeholder="Pandeglang">
-                  </div>
-                  <div class="field">
-                    <label>Status</label>
-                    <select id="wilayahAktif" class="select">
-                      <option value="true">Aktif</option>
-                      <option value="false">Nonaktif</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Latitude</label>
-                    <input id="wilayahLat" class="input" type="text" placeholder="-6.123456">
-                  </div>
-                  <div class="field">
-                    <label>Longitude</label>
-                    <input id="wilayahLng" class="input" type="text" placeholder="105.678901">
-                  </div>
-                  <div class="field full">
-                    <label>Metadata JSON</label>
-                    <textarea id="wilayahMeta" class="textarea" placeholder='{"validasi":"Belum diverifikasi","sumber":"Admin Kabupaten"}'></textarea>
-                  </div>
-                </div>
-                <div class="actions" style="margin-top:14px">
-                  <button class="btn btn-secondary" type="button" data-gps="wilayah">Ambil GPS</button>
-                  <button class="btn btn-primary" id="saveWilayahBtn">Simpan Wilayah</button>
-                </div>
-              </div>
-
-              <div id="distribusiPanel" class="form-panel">
-                <div class="grid-3">
-                  <div class="field">
-                    <label>Kode Distribusi</label>
-                    <input id="distribusiKode" class="input" type="text" placeholder="DSTR-001">
-                  </div>
-                  <div class="field">
-                    <label>Stokis ID</label>
-                    <input id="distribusiStokisId" class="input" type="text" placeholder="stks-labuan-01">
-                  </div>
-                  <div class="field">
-                    <label>Kurir ID</label>
-                    <input id="distribusiKurirId" class="input" type="text" placeholder="id dokumen kurir">
-                  </div>
-                  <div class="field">
-                    <label>Tujuan</label>
-                    <select id="distribusiTujuan" class="select">
-                      <option value="Warga">Warga</option>
-                      <option value="Dapur MBG">Dapur MBG</option>
-                      <option value="Lainnya">Lainnya</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Nama Penerima</label>
-                    <input id="distribusiPenerima" class="input" type="text" placeholder="Nama penerima">
-                  </div>
-                  <div class="field">
-                    <label>Jumlah</label>
-                    <input id="distribusiJumlah" class="input" type="number" placeholder="20">
-                  </div>
-                  <div class="field">
-                    <label>Status</label>
-                    <select id="distribusiStatus" class="select">
-                      <option value="Proses">Proses</option>
-                      <option value="Dikirim">Dikirim</option>
-                      <option value="Selesai">Selesai</option>
-                      <option value="Batal">Batal</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Tanggal Kirim</label>
-                    <input id="distribusiTanggal" class="input" type="datetime-local">
-                  </div>
-                  <div class="field full">
-                    <label>Catatan Distribusi</label>
-                    <textarea id="distribusiCatatan" class="textarea" placeholder="Catatan tambahan pengiriman"></textarea>
-                  </div>
-                </div>
-                <div class="actions" style="margin-top:14px">
-                  <button class="btn btn-primary" id="saveDistribusiBtn">Simpan Distribusi</button>
-                </div>
-              </div>
-            </section>
-
-            <section id="stokisView" class="glass panel-pad reveal hidden">
-              <div class="section-head" style="margin-bottom:12px">
-                <div>
-                  <h2 class="section-title">Panel Admin Stokis</h2>
-                  <p>Panel terbatas untuk stokis yang sedang login.</p>
-                </div>
-                <span class="badge">Scoped Access</span>
-              </div>
-
-              <div class="grid-2">
-                <div class="mini">
-                  <h3>Kelola profil stokis</h3>
-                  <p>Admin stokis dapat update data stokis sesuai <strong>stokisId</strong> sendiri.</p>
-                </div>
-                <div class="mini">
-                  <h3>Kelola kurir</h3>
-                  <p>Admin stokis dapat menambah dan mengelola kurir milik stokisnya sendiri.</p>
-                </div>
-              </div>
-
-              <div style="height:14px"></div>
-
-              <div class="grid-3">
-                <div class="field">
-                  <label>Stokis ID Aktif</label>
-                  <input id="myStokisId" class="input" type="text" readonly>
-                </div>
-                <div class="field">
-                  <label>Mode Akses</label>
-                  <input class="input" type="text" value="Admin Stokis" readonly>
-                </div>
-                <div class="field">
-                  <label>Status Sesi</label>
-                  <input id="stokisSessionState" class="input" type="text" value="Belum login" readonly>
-                </div>
-              </div>
-            </section>
-
-            <section class="glass table-shell reveal" id="dataset">
-              <div class="panel-pad">
-                <div class="section-head" style="margin-bottom:10px">
-                  <div>
-                    <h2 class="section-title">Data operasional</h2>
-                    <p>Data diambil langsung dari Firestore dan otomatis difilter berdasarkan role.</p>
-                  </div>
-                  <span class="badge">Realtime-ready Dataset</span>
-                </div>
-
-                <div class="toolbar">
-                  <div class="field">
-                    <label>Cari data</label>
-                    <input class="input" id="searchInput" type="text" placeholder="Cari nama, kode, status, stokis, kecamatan...">
-                  </div>
-                  <div class="field">
-                    <label>Jenis data</label>
-                    <select class="select" id="typeFilter">
-                      <option value="all">Semua</option>
-                      <option value="users">Users</option>
-                      <option value="stokis">Stokis</option>
-                      <option value="kurir">Kurir</option>
-                      <option value="wilayah">Wilayah</option>
-                      <option value="distribusi">Distribusi</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Status</label>
-                    <select class="select" id="statusFilter">
-                      <option value="all">Semua</option>
-                      <option value="aktif">Aktif</option>
-                      <option value="pending">Pending</option>
-                      <option value="nonaktif">Nonaktif</option>
-                      <option value="selesai">Selesai</option>
-                    </select>
-                  </div>
-                  <button class="btn btn-secondary" id="loadDataBtn">Muat Data</button>
-                  <button class="btn btn-dark" id="exportBtn">Ekspor JSON</button>
-                  <button class="btn btn-danger" id="openEditBtn">Edit Data</button>
-                </div>
-
-                <div class="inline-status" style="margin-top:12px" id="datasetInfo">
-                  Menunggu data Firestore...
-                </div>
-              </div>
-
-              <div class="mobile-scroll-hint">Mode mobile aktif: data ditampilkan sebagai kartu agar lebih nyaman dipakai dari HP.</div>
-
-              <div class="table-wrap">
-                <table aria-label="Tabel data operasional">
-                  <thead>
-                    <tr>
-                      <th style="min-width:120px">Jenis</th>
-                      <th style="min-width:150px">Kode / ID</th>
-                      <th style="min-width:190px">Nama</th>
-                      <th style="min-width:160px">Status / Role</th>
-                      <th style="min-width:190px">Scope</th>
-                      <th style="min-width:160px">Geo</th>
-                      <th style="min-width:150px">Foto</th>
-                      <th style="min-width:180px">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody id="dataBody"></tbody>
-                </table>
-              </div>
-
-              <div class="mobile-card-list" id="mobileCardList"></div>
-            </section>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <div class="modal-backdrop" id="editModal">
-    <div class="modal">
-      <div class="modal-head">
-        <h3 class="modal-title">Edit Data Firestore</h3>
-        <button class="btn btn-secondary" id="closeModalBtn" type="button">Tutup</button>
-      </div>
-
-      <input type="hidden" id="editCollection">
-      <input type="hidden" id="editDocId">
-      <input type="hidden" id="editFotoPath">
-
-      <div class="grid-3">
-        <div class="field">
-          <label>Collection</label>
-          <input id="editCollectionLabel" class="input" type="text" readonly>
-        </div>
-        <div class="field">
-          <label>Kode / ID</label>
-          <input id="editCode" class="input" type="text" placeholder="Kode utama">
-        </div>
-        <div class="field">
-          <label>Status / Role</label>
-          <input id="editStatus" class="input" type="text" placeholder="Status">
-        </div>
-        <div class="field">
-          <label>Nama</label>
-          <input id="editName" class="input" type="text" placeholder="Nama utama">
-        </div>
-        <div class="field">
-          <label>Latitude</label>
-          <input id="editLat" class="input" type="text" placeholder="-6.123456">
-        </div>
-        <div class="field">
-          <label>Longitude</label>
-          <input id="editLng" class="input" type="text" placeholder="105.678901">
-        </div>
-        <div class="field full">
-          <label>Foto Baru (opsional)</label>
-          <input id="editFotoFile" class="input" type="file" accept="image/*">
-        </div>
-        <div class="field full">
-          <label>Metadata JSON</label>
-          <textarea id="editJson" class="textarea" placeholder='{"field":"value"}'></textarea>
-        </div>
-      </div>
-
-      <div class="actions" style="margin-top:14px">
-        <button class="btn btn-primary" id="saveEditBtn">Simpan Perubahan</button>
-        <button class="btn btn-secondary" type="button" data-gps="edit">Ambil GPS</button>
-        <button class="btn btn-danger" id="deleteEditBtn" type="button">Hapus Data</button>
+    </div>
+    <div id="tab-orders" class="section">
+      <div class="card">
+        <h3>📋 Daftar Pesanan</h3>
+        <div class="sub">Update dari 35 kecamatan</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">ID</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Pelanggan</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Kecamatan</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Jumlah</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Total</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Status</th></tr>
+          </thead>
+          <tbody id="orderBody"></tbody>
+        </table>
       </div>
     </div>
   </div>
+  <div class="footer">© 2026 Agen-Apet-Pandeglang | Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
+</div>
 
-  <nav class="bottom-nav" aria-label="Navigasi bawah mobile">
-    <a href="#dashboard" class="active">Dashboard</a>
-    <a href="#auth">Login</a>
-    <a href="#modules">Modul</a>
-    <a href="#dataset">Data</a>
-  </nav>
+<script>
+// ===== FIREBASE CONFIG (GANTI DENGAN PUNYA KAMU) =====
+const firebaseConfig = {
+  apiKey: "AIzaSyA2L1XvGkuXAZ7od6QrcAzriRw-Ydprid4",
+  authDomain: "agen-apeet-pandeglang.firebaseapp.com",
+  projectId: "agen-apeet-pandeglang",
+  storageBucket: "agen-apeet-pandeglang.firebasestorage.app",
+  messagingSenderId: "AGEN-APEET-PANDEGLANG",
+  appId: "AGEN-APEET-PANDEGLANG"
+};
 
-  <script type="module" src="./assets/js/app.js"></script>
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ===== TOAST NOTIFICATION =====
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+// ===== LOGIN =====
+function login() {
+  const email = document.getElementById('user').value;
+  const password = document.getElementById('pass').value;
+  
+  auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('dashPage').classList.add('show');
+      document.getElementById('userEmail').textContent = '👤 ' + userCredential.user.email;
+      loadData();
+      showToast('✅ Login berhasil!');
+    })
+    .catch((error) => {
+      showToast('❌ ' + error.message, true);
+    });
+}
+
+// ===== LOGOUT =====
+function logout() {
+  auth.signOut().then(() => {
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('dashPage').classList.remove('show');
+    showToast('👋 Logout berhasil!');
+  });
+}
+
+// ===== LOAD DATA DARI FIRESTORE =====
+function loadData() {
+  // Load kurir
+  db.collection('kurir').get().then((snapshot) => {
+    const kurirData = [];
+    snapshot.forEach((doc) => {
+      kurirData.push({ id: doc.id, ...doc.data() });
+    });
+    renderKurir(kurirData);
+    renderSelect(kurirData);
+    document.getElementById('totalKurir').textContent = kurirData.length;
+  });
+
+  // Load orders
+  db.collection('orders').get().then((snapshot) => {
+    const ordersData = [];
+    snapshot.forEach((doc) => {
+      ordersData.push({ id: doc.id, ...doc.data() });
+    });
+    renderOrders(ordersData);
+    document.getElementById('totalOrders').textContent = ordersData.length;
+    const totalOmzet = ordersData.reduce((sum, o) => sum + (o.total || 0), 0);
+    document.getElementById('omzet').textContent = 'Rp' + (totalOmzet/1000).toFixed(0) + 'rb';
+  });
+}
+
+// ===== RENDER KURIR =====
+function renderKurir(data) {
+  var html = '';
+  if (data.length === 0) {
+    html = '<div style="text-align:center;color:#999;padding:20px">Belum ada kurir. Tambahkan di Firebase.</div>';
+  } else {
+    for (var i = 0; i < data.length; i++) {
+      html += '<div class="kurir-item"><span>' + data[i].name + '</span><span class="online">✅ Online</span></div>';
+    }
+  }
+  document.getElementById('kurirGrid').innerHTML = html;
+}
+
+// ===== RENDER ORDERS =====
+function renderOrders(data) {
+  var html = '';
+  if (data.length === 0) {
+    html = '<tr><td colspan="6" style="text-align:center;color:#999">Belum ada pesanan</td></tr>';
+  } else {
+    for (var i = 0; i < data.length; i++) {
+      var o = data[i];
+      var txt = o.status || 'Pending';
+      if (txt === 'Delivered') txt = '✅ Delivered';
+      else if (txt === 'Processing') txt = '⏳ Processing';
+      else if (txt === 'Pending') txt = '🕐 Pending';
+      html += '<tr><td>#' + (i+1) + '</td><td>' + (o.customer || '-') + '</td><td>' + (o.kecamatan || '-') + '</td><td>' + (o.jumlah || 0) + '</td><td>Rp' + (o.total || 0).toLocaleString() + '</td><td>' + txt + '</td></tr>';
+    }
+  }
+  document.getElementById('orderBody').innerHTML = html;
+}
+
+// ===== RENDER SELECT KURIR =====
+function renderSelect(data) {
+  var html = '<option value="">Pilih Kurir</option>';
+  for (var i = 0; i < data.length; i++) {
+    html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+  }
+  document.getElementById('pilihKurir').innerHTML = html;
+}
+
+// ===== GENERATE PAYROLL =====
+function generatePayroll() {
+  var id = document.getElementById('pilihKurir').value;
+  var box = document.getElementById('hasilPayroll');
+  if (!id) {
+    box.style.display = 'none';
+    return;
+  }
+  // Cari nama kurir dari dropdown
+  var select = document.getElementById('pilihKurir');
+  var nama = select.options[select.selectedIndex].text;
+  
+  var gaji = 2500000;
+  var insentif = 1350000;
+  var bonus = 540000;
+  var total = gaji + insentif + bonus;
+  
+  document.getElementById('namaKurir').textContent = '🧾 ' + nama;
+  document.getElementById('gajiPokok').textContent = 'Rp ' + gaji.toLocaleString();
+  document.getElementById('insentif').textContent = 'Rp ' + insentif.toLocaleString();
+  document.getElementById('bonus').textContent = 'Rp ' + bonus.toLocaleString();
+  document.getElementById('totalGaji').innerHTML = '<b>Rp ' + total.toLocaleString() + '</b>';
+  box.style.display = 'block';
+}
+
+// ===== GANTI TAB =====
+function gantiTab(tab) {
+  var btns = document.querySelectorAll('.tab button');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  var sections = document.querySelectorAll('.section');
+  for (var i = 0; i < sections.length; i++) sections[i].classList.remove('show');
+  if (tab === 'dashboard') {
+    btns[0].classList.add('active');
+    document.getElementById('tab-dashboard').classList.add('show');
+    loadData();
+  } else if (tab === 'payroll') {
+    btns[1].classList.add('active');
+    document.getElementById('tab-payroll').classList.add('show');
+  } else if (tab === 'orders') {
+    btns[2].classList.add('active');
+    document.getElementById('tab-orders').classList.add('show');
+    loadData();
+  }
+}
+
+// ===== CEK STATUS LOGIN =====
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashPage').classList.add('show');
+    document.getElementById('userEmail').textContent = '👤 ' + user.email;
+    loadData();
+  } else {
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('dashPage').classList.remove('show');
+  }
+});
+</script>
 </body>
-</html>
+                                                                              </html>
