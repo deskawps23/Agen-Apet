@@ -1,179 +1,454 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agen Apet</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:arial,sans-serif}
-    body{background:#f0f4f8}
-    .login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a365d,#2b6cb0);padding:20px}
-    .box{background:white;padding:30px;border-radius:20px;max-width:400px;width:100%;text-align:center}
-    .logo{font-size:60px}
-    h1{font-size:24px;color:#1a365d;margin:10px 0}
-    p{color:#718096;font-size:14px}
-    hr{margin:20px 0;border:1px solid #ddd}
-    input{width:100%;padding:14px;border:2px solid #ddd;border-radius:12px;font-size:16px;margin:8px 0}
-    button{width:100%;padding:14px;background:#2b6cb0;color:white;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer}
-    button:active{transform:scale(0.97)}
-    .hint{font-size:12px;color:#999;margin-top:12px}
-    .owner{font-size:11px;color:#777;margin-top:10px;border-top:1px solid #eee;padding-top:10px}
-    .dash{display:none;padding:16px}
-    .dash.show{display:block}
-    .header{background:linear-gradient(135deg,#1a365d,#2b6cb0);color:white;padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-    .header h2{font-size:18px}
-    .logout{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:6px 16px;border-radius:8px;font-size:13px;cursor:pointer}
-    .tab{display:flex;background:white;border-bottom:2px solid #ddd;overflow-x:auto}
-    .tab button{padding:12px 20px;border:none;background:transparent;font-weight:bold;color:#777;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
-    .tab button.active{color:#2b6cb0;border-bottom-color:#2b6cb0}
-    .content{max-width:800px;margin:auto;padding:16px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-    .grid>div{background:white;padding:16px;border-radius:12px;text-align:center}
-    .grid .angka{font-size:28px;font-weight:bold;color:#2b6cb0}
-    .grid .label{font-size:12px;color:#777}
-    .card{background:white;padding:16px;border-radius:12px;margin-bottom:16px}
-    .card h3{font-size:16px;color:#1a365d}
-    .card .sub{font-size:13px;color:#777;margin-bottom:12px}
-    .kurir-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .kurir-item{background:#f7fafc;padding:8px 12px;border-radius:8px;display:flex;justify-content:space-between;font-size:13px}
-    .kurir-item .online{color:#48bb78;font-weight:bold}
-    .section{display:none}
-    .section.show{display:block}
-    .footer{background:#1a365d;color:white;padding:12px;text-align:center;font-size:12px;position:fixed;bottom:0;width:100%}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agen Apet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f0f4f8;
+        }
+        .login {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a365d, #2b6cb0);
+            padding: 20px;
+        }
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo {
+            font-size: 60px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #1a365d;
+            margin: 10px 0;
+        }
+        p {
+            color: #718096;
+            font-size: 14px;
+        }
+        hr {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            margin: 8px 0;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #2b6cb0;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        .hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 12px;
+        }
+        .owner {
+            font-size: 11px;
+            color: #777;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .dash {
+            display: none;
+            padding: 16px;
+        }
+        .dash.show {
+            display: block;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a365d, #2b6cb0);
+            color: white;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .header h2 {
+            font-size: 18px;
+        }
+        .logout {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .tab {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+        }
+        .tab button {
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            font-weight: bold;
+            color: #777;
+            font-size: 14px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+        .tab button.active {
+            color: #2b6cb0;
+            border-bottom-color: #2b6cb0;
+        }
+        .content {
+            max-width: 800px;
+            margin: auto;
+            padding: 16px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .grid>div {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .grid .angka {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2b6cb0;
+        }
+        .grid .label {
+            font-size: 12px;
+            color: #777;
+        }
+        .card {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .card h3 {
+            font-size: 16px;
+            color: #1a365d;
+        }
+        .card .sub {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 12px;
+        }
+        .kurir-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .kurir-item {
+            background: #f7fafc;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        .kurir-item .online {
+            color: #48bb78;
+            font-weight: bold;
+        }
+        .section {
+            display: none;
+        }
+        .section.show {
+            display: block;
+        }
+        .footer {
+            background: #1a365d;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            margin: 8px 0;
+        }
+        .payroll-box {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f7fafc;
+            border-radius: 10px;
+            display: none;
+        }
+        .payroll-box table {
+            width: 100%;
+        }
+        .payroll-box td {
+            padding: 6px 0;
+        }
+        .payroll-box .total {
+            border-top: 2px solid #2b6cb0;
+            font-size: 17px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            background: #f7fafc;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-hijau {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .badge-kuning {
+            background: #fefcbf;
+            color: #744210;
+        }
+        .badge-abu {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+    </style>
 </head>
 <body>
-<div id="loginPage" class="login">
-  <div class="box">
-    <div class="logo">🚰</div>
-    <h1>Agen-Apet-Pandeglang</h1>
-    <p>Melayani masyarakat dan dapur MBG sekabupaten Pandeglang</p>
-    <hr>
-    <input type="text" id="user" placeholder="Username" value="deska">
-    <input type="password" id="pass" placeholder="Password" value="admin123">
-    <button onclick="login()">Login</button>
-    <div class="hint">Username: deska | Password: admin123</div>
-    <div class="owner">Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
-  </div>
-</div>
-<div id="dashPage" class="dash">
-  <div class="header">
-    <h2>🚰 Agen-Apet-Pandeglang</h2>
-    <div>
-      <span style="font-size:13px;margin-right:10px">👤 Deska</span>
-      <button class="logout" onclick="logout()">Logout</button>
-    </div>
-  </div>
-  <div class="tab">
-    <button class="active" onclick="gantiTab('dashboard')">📊 Dashboard</button>
-    <button onclick="gantiTab('payroll')">💰 Payroll</button>
-    <button onclick="gantiTab('orders')">📋 Pesanan</button>
-  </div>
-  <div class="content">
-    <div id="tab-dashboard" class="section show">
-      <div class="grid">
-        <div><div class="label">📦 Total Pesanan</div><div class="angka">156</div><div style="font-size:11px;color:#999">Hari ini</div></div>
-        <div><div class="label">🚚 Kurir Aktif</div><div class="angka">10/10</div><div style="font-size:11px;color:#999">Semua aktif</div></div>
-        <div><div class="label">💰 Omzet</div><div class="angka">Rp2.65Jt</div><div style="font-size:11px;color:#999">Hari ini</div></div>
-        <div><div class="label">🏷️ Kecamatan</div><div class="angka">35</div><div style="font-size:11px;color:#999">Pandeglang</div></div>
-      </div>
-      <div class="card">
-        <h3>🚚 Status 10 Kurir</h3>
-        <div class="sub">Semua aktif melayani 35 kecamatan</div>
-        <div class="kurir-grid" id="kurirGrid"></div>
-      </div>
-    </div>
-    <div id="tab-payroll" class="section">
-      <div class="card">
-        <h3>💰 Generate Payroll</h3>
-        <div class="sub">Bulan: Juli 2026</div>
-        <select id="pilihKurir" onchange="generatePayroll()">
-          <option value="">Pilih Kurir</option>
-        </select>
-        <div id="hasilPayroll" style="margin-top:16px;padding:16px;background:#f7fafc;border-radius:10px;display:none">
-          <div id="namaKurir" style="font-weight:bold;font-size:17px">-</div>
-          <div id="periode" style="color:#777;font-size:13px">Periode: 07-2026</div>
-          <table style="width:100%">
-            <tr><td>Gaji Pokok</td><td align="right" id="gajiPokok">Rp 0</td></tr>
-            <tr><td>Insentif Galon</td><td align="right" id="insentif">Rp 0</td></tr>
-            <tr><td>Bonus Jarak</td><td align="right" id="bonus">Rp 0</td></tr>
-            <tr style="border-top:2px solid #2b6cb0;font-size:17px"><td><b>TOTAL</b></td><td align="right" id="totalGaji"><b>Rp 0</b></td></tr>
-          </table>
+    <div id="loginPage" class="login">
+        <div class="box">
+            <div class="logo">🚰</div>
+            <h1>Agen-Apet-Pandeglang</h1>
+            <p>Melayani masyarakat dan dapur MBG sekabupaten Pandeglang</p>
+            <hr>
+            <input type="text" id="user" placeholder="Username" value="deska">
+            <input type="password" id="pass" placeholder="Password" value="admin123">
+            <button onclick="login()">Login</button>
+            <div class="hint">Username: deska | Password: admin123</div>
+            <div class="owner">Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
         </div>
-      </div>
     </div>
-    <div id="tab-orders" class="section">
-      <div class="card">
-        <h3>📋 Daftar Pesanan</h3>
-        <div class="sub">Update dari 35 kecamatan</div>
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead>
-            <tr><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">ID</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Pelanggan</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Kecamatan</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Jumlah</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Total</th><th style="background:#f7fafc;padding:10px;text-align:left;border-bottom:2px solid #ddd">Status</th></tr>
-          </thead>
-          <tbody id="orderBody"></tbody>
-        </table>
-      </div>
+
+    <div id="dashPage" class="dash">
+        <div class="header">
+            <h2>🚰 Agen-Apet-Pandeglang</h2>
+            <div>
+                <span style="font-size:13px;margin-right:10px">👤 Deska</span>
+                <button class="logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="tab">
+            <button class="active" onclick="gantiTab('dashboard')">📊 Dashboard</button>
+            <button onclick="gantiTab('payroll')">💰 Payroll</button>
+            <button onclick="gantiTab('orders')">📋 Pesanan</button>
+        </div>
+
+        <div class="content">
+            <div id="tab-dashboard" class="section show">
+                <div class="grid">
+                    <div><div class="label">📦 Total Pesanan</div><div class="angka">156</div><div style="font-size:11px;color:#999">Hari ini</div></div>
+                    <div><div class="label">🚚 Kurir Aktif</div><div class="angka">10/10</div><div style="font-size:11px;color:#999">Semua aktif</div></div>
+                    <div><div class="label">💰 Omzet</div><div class="angka">Rp2.65Jt</div><div style="font-size:11px;color:#999">Hari ini</div></div>
+                    <div><div class="label">🏷️ Kecamatan</div><div class="angka">35</div><div style="font-size:11px;color:#999">Pandeglang</div></div>
+                </div>
+                <div class="card">
+                    <h3>🚚 Status 10 Kurir</h3>
+                    <div class="sub">Semua aktif melayani 35 kecamatan</div>
+                    <div class="kurir-grid" id="kurirGrid"></div>
+                </div>
+            </div>
+
+            <div id="tab-payroll" class="section">
+                <div class="card">
+                    <h3>💰 Generate Payroll</h3>
+                    <div class="sub">Bulan: Juli 2026</div>
+                    <select id="pilihKurir" onchange="generatePayroll()">
+                        <option value="">Pilih Kurir</option>
+                    </select>
+                    <div id="hasilPayroll" class="payroll-box">
+                        <div id="namaKurir" style="font-weight:bold;font-size:17px">-</div>
+                        <div id="periode" style="color:#777;font-size:13px">Periode: 07-2026</div>
+                        <table>
+                            <tr><td>Gaji Pokok</td><td align="right" id="gajiPokok">Rp 0</td></tr>
+                            <tr><td>Insentif Galon</td><td align="right" id="insentif">Rp 0</td></tr>
+                            <tr><td>Bonus Jarak</td><td align="right" id="bonus">Rp 0</td></tr>
+                            <tr class="total"><td><b>TOTAL</b></td><td align="right" id="totalGaji"><b>Rp 0</b></td></tr>
+                        </table>
+                        <button onclick="alert('📄 Slip gaji berhasil di-export!')" style="margin-top:10px;background:#48bb78;color:white;border:none;border-radius:10px;padding:10px;font-weight:bold;width:100%;cursor:pointer">📄 Export PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-orders" class="section">
+                <div class="card">
+                    <h3>📋 Daftar Pesanan</h3>
+                    <div class="sub">Update dari 35 kecamatan</div>
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Pelanggan</th><th>Kecamatan</th><th>Jumlah</th><th>Total</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="orderBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">© 2026 Agen-Apet-Pandeglang | Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
     </div>
-  </div>
-  <div class="footer">© 2026 Agen-Apet-Pandeglang | Owner: Agus Suryana | Admin: Deska Wiata Praja S</div>
-</div>
-<script>
-var kurir = [
-  {id:1, name:'Kurir 1 - Ahmad'},{id:2, name:'Kurir 2 - Budi'},{id:3, name:'Kurir 3 - Caca'},
-  {id:4, name:'Kurir 4 - Dedi'},{id:5, name:'Kurir 5 - Euis'},{id:6, name:'Kurir 6 - Fajar'},
-  {id:7, name:'Kurir 7 - Gilang'},{id:8, name:'Kurir 8 - Hani'},{id:9, name:'Kurir 9 - Iwan'},
-  {id:10, name:'Kurir 10 - Joko'}
-];
-var orders = [
-  {id:1, customer:'Budi Santoso', kecamatan:'Majasari', jumlah:2, total:34000, status:'Delivered'},
-  {id:2, customer:'Dapur MBG Cigeulis', kecamatan:'Cigeulis', jumlah:50, total:875000, status:'Processing'},
-  {id:3, customer:'Ani Rahayu', kecamatan:'Carita', jumlah:3, total:52500, status:'Pending'},
-  {id:4, customer:'Dapur MBG Cimanggu', kecamatan:'Cimanggu', jumlah:40, total:720000, status:'Delivered'},
-  {id:5, customer:'Rudi Hermawan', kecamatan:'Kadumerak', jumlah:1, total:17000, status:'Delivered'}
-];
-function login() {
-  var u=document.getElementById('user').value;
-  var p=document.getElementById('pass').value;
-  if(u==='deska' && p==='admin123') {
-    document.getElementById('loginPage').style.display='none';
-    document.getElementById('dashPage').classList.add('show');
-    renderKurir();renderOrders();renderSelect();gantiTab('dashboard');
-  } else { alert('Username atau password salah!'); }
-}
-function logout() {
-  document.getElementById('loginPage').style.display='flex';
-  document.getElementById('dashPage').classList.remove('show');
-}
-function renderKurir() {
-  var html='';for(var i=0;i<kurir.length;i++){html+='<div class="kurir-item"><span>'+kurir[i].name+'</span><span class="online">✅ Online</span></div>';}
-  document.getElementById('kurirGrid').innerHTML=html;
-}
-function renderOrders() {
-  var html='';for(var i=0;i<orders.length;i++){var o=orders[i];var txt=o.status;if(o.status==='Delivered')txt='✅ Delivered';else if(o.status==='Processing')txt='⏳ Processing';else if(o.status==='Pending')txt='🕐 Pending';html+='<tr><td>#'+o.id+'</td><td>'+o.customer+'</td><td>'+o.kecamatan+'</td><td>'+o.jumlah+'</td><td>Rp'+o.total.toLocaleString()+'</td><td>'+txt+'</td></tr>';}
-  document.getElementById('orderBody').innerHTML=html;
-}
-function renderSelect() {
-  var html='<option value="">Pilih Kurir</option>';for(var i=0;i<kurir.length;i++){html+='<option value="'+kurir[i].id+'">'+kurir[i].name+'</option>';}
-  document.getElementById('pilihKurir').innerHTML=html;
-}
-function generatePayroll() {
-  var id=document.getElementById('pilihKurir').value;var box=document.getElementById('hasilPayroll');if(!id){box.style.display='none';return;}
-  var k=null;for(var i=0;i<kurir.length;i++){if(kurir[i].id==id)k=kurir[i];}if(!k)return;
-  var gaji=2500000,insentif=1350000,bonus=540000,total=gaji+insentif+bonus;
-  document.getElementById('namaKurir').textContent='🧾 '+k.name;
-  document.getElementById('gajiPokok').textContent='Rp '+gaji.toLocaleString();
-  document.getElementById('insentif').textContent='Rp '+insentif.toLocaleString();
-  document.getElementById('bonus').textContent='Rp '+bonus.toLocaleString();
-  document.getElementById('totalGaji').innerHTML='<b>Rp '+total.toLocaleString()+'</b>';
-  box.style.display='block';
-}
-function gantiTab(tab) {
-  var btns=document.querySelectorAll('.tab button');for(var i=0;i<btns.length;i++)btns[i].classList.remove('active');
-  var sections=document.querySelectorAll('.section');for(var i=0;i<sections.length;i++)sections[i].classList.remove('show');
-  if(tab==='dashboard'){btns[0].classList.add('active');document.getElementById('tab-dashboard').classList.add('show');}
-  else if(tab==='payroll'){btns[1].classList.add('active');document.getElementById('tab-payroll').classList.add('show');}
-  else if(tab==='orders'){btns[2].classList.add('active');document.getElementById('tab-orders').classList.add('show');}
-}
-</script>
+
+    <script>
+        const kurir = [
+            { id: 1, name: 'Kurir 1 - Ahmad' },
+            { id: 2, name: 'Kurir 2 - Budi' },
+            { id: 3, name: 'Kurir 3 - Caca' },
+            { id: 4, name: 'Kurir 4 - Dedi' },
+            { id: 5, name: 'Kurir 5 - Euis' },
+            { id: 6, name: 'Kurir 6 - Fajar' },
+            { id: 7, name: 'Kurir 7 - Gilang' },
+            { id: 8, name: 'Kurir 8 - Hani' },
+            { id: 9, name: 'Kurir 9 - Iwan' },
+            { id: 10, name: 'Kurir 10 - Joko' }
+        ];
+
+        const orders = [
+            { id: 1, customer: 'Budi Santoso', kecamatan: 'Majasari', jumlah: 2, total: 34000, status: 'Delivered' },
+            { id: 2, customer: 'Dapur MBG Cigeulis', kecamatan: 'Cigeulis', jumlah: 50, total: 875000, status: 'Processing' },
+            { id: 3, customer: 'Ani Rahayu', kecamatan: 'Carita', jumlah: 3, total: 52500, status: 'Pending' },
+            { id: 4, customer: 'Dapur MBG Cimanggu', kecamatan: 'Cimanggu', jumlah: 40, total: 720000, status: 'Delivered' },
+            { id: 5, customer: 'Rudi Hermawan', kecamatan: 'Kadumerak', jumlah: 1, total: 17000, status: 'Delivered' }
+        ];
+
+        function login() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            if (u === 'deska' && p === 'admin123') {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashPage').classList.add('show');
+                renderKurir();
+                renderOrders();
+                renderSelect();
+                gantiTab('dashboard');
+            } else {
+                alert('❌ Username atau password salah!');
+            }
+        }
+
+        function logout() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashPage').classList.remove('show');
+        }
+
+        function renderKurir() {
+            let html = '';
+            kurir.forEach(k => {
+                html += `<div class="kurir-item"><span>${k.name}</span><span class="online">✅ Online</span></div>`;
+            });
+            document.getElementById('kurirGrid').innerHTML = html;
+        }
+
+        function renderOrders() {
+            let html = '';
+            orders.forEach(o => {
+                let statusText = '🕐 ' + o.status;
+                if (o.status === 'Delivered') statusText = '✅ Delivered';
+                else if (o.status === 'Processing') statusText = '⏳ Processing';
+                else if (o.status === 'Pending') statusText = '🕐 Pending';
+                html += `<tr><td>#${o.id}</td><td>${o.customer}</td><td>${o.kecamatan}</td><td>${o.jumlah}</td><td>Rp${o.total.toLocaleString()}</td><td>${statusText}</td></tr>`;
+            });
+            document.getElementById('orderBody').innerHTML = html;
+        }
+
+        function renderSelect() {
+            let html = '<option value="">Pilih Kurir</option>';
+            kurir.forEach(k => {
+                html += `<option value="${k.id}">${k.name}</option>`;
+            });
+            document.getElementById('pilihKurir').innerHTML = html;
+        }
+
+        function generatePayroll() {
+            const id = document.getElementById('pilihKurir').value;
+            const box = document.getElementById('hasilPayroll');
+            if (!id) { box.style.display = 'none'; return; }
+            const k = kurir.find(k => k.id == id);
+            if (!k) return;
+            const gaji = 2500000;
+            const insentif = 1350000;
+            const bonus = 540000;
+            const total = gaji + insentif + bonus;
+            document.getElementById('namaKurir').textContent = '🧾 ' + k.name;
+            document.getElementById('gajiPokok').textContent = 'Rp ' + gaji.toLocaleString();
+            document.getElementById('insentif').textContent = 'Rp ' + insentif.toLocaleString();
+            document.getElementById('bonus').textContent = 'Rp ' + bonus.toLocaleString();
+            document.getElementById('totalGaji').innerHTML = '<b>Rp ' + total.toLocaleString() + '</b>';
+            box.style.display = 'block';
+        }
+
+        function gantiTab(tab) {
+            document.querySelectorAll('.tab button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('show'));
+            if (tab === 'dashboard') {
+                document.querySelector('.tab button:nth-child(1)').classList.add('active');
+                document.getElementById('tab-dashboard').classList.add('show');
+            } else if (tab === 'payroll') {
+                document.querySelector('.tab button:nth-child(2)').classList.add('active');
+                document.getElementById('tab-payroll').classList.add('show');
+            } else if (tab === 'orders') {
+                document.querySelector('.tab button:nth-child(3)').classList.add('active');
+                document.getElementById('tab-orders').classList.add('show');
+            }
+        }
+    </script>
 </body>
-</html>
+  </html>
